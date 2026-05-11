@@ -11,9 +11,11 @@ import TanStackQueryDevtools from '../integrations/tanstack-query/devtools'
 import appCss from '../styles.css?url'
 
 import type { QueryClient } from '@tanstack/react-query'
+import type { AuthStore } from '#/stores/useAuthStore'
 
 interface MyRouterContext {
   queryClient: QueryClient
+  getAuth: () => AuthStore
 }
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
