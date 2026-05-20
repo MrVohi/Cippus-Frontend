@@ -102,7 +102,8 @@ function RegisterPage() {
             const res = await fetch(import.meta.env.VITE_API_URL + "/api/v1/auth/register", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ ...data, captcha: token })
+                body: JSON.stringify({ ...data, captcha: token }),
+                credentials: "include",
             });
             if (!res.ok) throw new Error("Register failed");
             const body = await res.json();

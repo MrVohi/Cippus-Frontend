@@ -13,6 +13,7 @@ import appCss from '../styles.css?url'
 
 import type { QueryClient } from '@tanstack/react-query'
 import { type AuthStore, useAuthStore } from '#/stores/useAuthStore'
+import { useEffect } from 'react'
 
 interface MyRouterContext {
   queryClient: QueryClient
@@ -40,30 +41,34 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
       },
     ],
   }),
-  loader: async () => {
-    const user = useAuthStore.getState().user;
-
-    if (user != null) {
-      return
-    }
-
-    try {
-      const response = await fetch(import.meta.env.VITE_API_URL + "/api/v1/auth/refresh", { method: "POST", credentials: "include" });
-
-      if (response.ok) {
-        const data = await response.json();
-        useAuthStore.getState().setUser(data.user);
-        useAuthStore.getState().setToken(data.accessToken);
-      }
-
-    } catch (error) { }
-  },
   shellComponent: RootDocument,
 })
 
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   const user = useAuthStore(state => state.user)
+
+  useEffect(() => {
+    async function hydrate() {
+      const user = useAuthStore.getState().user;
+
+      if (user != null) {
+        return
+      }
+
+      try {
+        const response = await fetch(import.meta.env.VITE_API_URL + "/api/v1/auth/refresh", { method: "POST", credentials: "include" });
+
+        if (response.ok) {
+          const data = await response.json();
+          useAuthStore.getState().setUser(data.user);
+          useAuthStore.getState().setToken(data.accessToken);
+        }
+
+      } catch (error) { }
+    }
+    hydrate()
+  }, [])
 
   return (
     <html lang="en">

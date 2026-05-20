@@ -29,7 +29,7 @@ function LoginPage() {
 
     async function onSubmit(data: LoginFormData) {
         try {
-            const res = await fetch(import.meta.env.VITE_API_URL + "/api/v1/auth/login", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) });
+            const res = await fetch(import.meta.env.VITE_API_URL + "/api/v1/auth/login", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data), credentials: "include" });
             if (!(res.ok)) throw new Error("Login failed");
             const body = await res.json();
             useAuthStore.getState().setUser(body.user);
