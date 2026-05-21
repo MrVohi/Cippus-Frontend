@@ -9,24 +9,23 @@
    ============================================================ */
 
 :root {
-
   /* ----------------------------------------------------------
      PALETTE â€” Light mode (road in daylight)
   ---------------------------------------------------------- */
 
-  --iron: #2B2520;
+  --iron: #2b2520;
   /* Darkest â€” text, strong UI elements */
-  --shadow-stone: #5C5248;
+  --shadow-stone: #5c5248;
   /* Secondary text, borders */
-  --worn-limestone: #8C8074;
+  --worn-limestone: #8c8074;
   /* Muted text, placeholder, dormant graph nodes */
-  --road-dust: #C4B49A;
+  --road-dust: #c4b49a;
   /* Subtle borders, dividers */
-  --pale-stone: #E8DFD0;
+  --pale-stone: #e8dfd0;
   /* Card backgrounds, input backgrounds */
-  --chalk: #F5F0E8;
+  --chalk: #f5f0e8;
   /* Page background */
-  --ember: #B85C28;
+  --ember: #b85c28;
   /* Accent â€” active states, match moment, primary CTAs */
 
   /* ----------------------------------------------------------
@@ -35,20 +34,24 @@
 
   --color-bg: var(--pale-stone);
   --color-surface: var(--pale-stone);
-  --color-surface-raised: #FFFFFF;
+  --color-surface-raised: #ffffff;
 
   --color-text-primary: var(--iron);
   --color-text-secondary: var(--shadow-stone);
   --color-text-muted: var(--worn-limestone);
   --color-text-placeholder: var(--road-dust);
-  --color-text-on-accent: #FFFFFF;
+  --color-text-on-accent: #ffffff;
 
   --color-border: var(--road-dust);
   --color-border-subtle: color-mix(in oklab, var(--road-dust) 50%, transparent);
 
   --color-accent: var(--ember);
   --color-accent-hover: color-mix(in oklab, var(--ember) 85%, var(--iron));
-  --color-accent-subtle: color-mix(in oklab, var(--ember) 12%, var(--pale-stone));
+  --color-accent-subtle: color-mix(
+    in oklab,
+    var(--ember) 12%,
+    var(--pale-stone)
+  );
 
   --color-graph-node: var(--worn-limestone);
   /* Dormant build */
@@ -149,7 +152,7 @@
 
   --shadow-sm: 0 1px 2px rgba(43, 37, 32, 0.06);
   --shadow-md: 0 2px 8px rgba(43, 37, 32, 0.08);
-  --shadow-lg: 0 4px 16px rgba(43, 37, 32, 0.10);
+  --shadow-lg: 0 4px 16px rgba(43, 37, 32, 0.1);
 
   /* ----------------------------------------------------------
      MOTION â€” Match moment principle
@@ -182,28 +185,26 @@
   /* Match moment settled */
 }
 
-
 /* ============================================================
    DARK MODE â€” Road at dusk
    ============================================================ */
 
 .dark,
-[data-theme="dark"] {
-
+[data-theme='dark'] {
   /* ----------------------------------------------------------
      PALETTE â€” Dark mode
   ---------------------------------------------------------- */
 
-  --deep-shadow: #1A1714;
+  --deep-shadow: #1a1714;
   --dusk-stone: #272320;
-  --ash: #3D3830;
-  --limestone-dark: #6B6058;
+  --ash: #3d3830;
+  --limestone-dark: #6b6058;
   /* Dormant graph nodes on dark bg */
-  --dust-dark: #C4B49A;
+  --dust-dark: #c4b49a;
   /* Readable muted text on dark */
-  --stone-light: #E8DFD0;
+  --stone-light: #e8dfd0;
   /* Primary text on dark */
-  --ember-dusk: #C4621E;
+  --ember-dusk: #c4621e;
   /* Ember brighter against dark */
 
   /* ----------------------------------------------------------
@@ -218,14 +219,22 @@
   --color-text-secondary: var(--dust-dark);
   --color-text-muted: var(--limestone-dark);
   --color-text-placeholder: var(--ash);
-  --color-text-on-accent: #FFFFFF;
+  --color-text-on-accent: #ffffff;
 
   --color-border: var(--ash);
   --color-border-subtle: color-mix(in oklab, var(--ash) 50%, transparent);
 
   --color-accent: var(--ember-dusk);
-  --color-accent-hover: color-mix(in oklab, var(--ember-dusk) 85%, var(--stone-light));
-  --color-accent-subtle: color-mix(in oklab, var(--ember-dusk) 14%, var(--dusk-stone));
+  --color-accent-hover: color-mix(
+    in oklab,
+    var(--ember-dusk) 85%,
+    var(--stone-light)
+  );
+  --color-accent-subtle: color-mix(
+    in oklab,
+    var(--ember-dusk) 14%,
+    var(--dusk-stone)
+  );
 
   --color-graph-node: var(--limestone-dark);
   --color-graph-active: var(--ember-dusk);
@@ -238,14 +247,17 @@
   --color-input-border: var(--ash);
   --color-input-focus: var(--ember-dusk);
 
-  --color-match-bg: color-mix(in oklab, var(--ember-dusk) 10%, var(--dusk-stone));
+  --color-match-bg: color-mix(
+    in oklab,
+    var(--ember-dusk) 10%,
+    var(--dusk-stone)
+  );
   --color-match-border: var(--ember-dusk);
 
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2);
   --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.28);
   --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.36);
 }
-
 
 /* ============================================================
    BASE STYLES
@@ -434,17 +446,33 @@ body {
 ---------------------------------------------------------- */
 
 @keyframes step-in {
-  from { opacity: 0; transform: translateX(18px); }
-  to   { opacity: 1; transform: translateX(0); }
+  from {
+    opacity: 0;
+    transform: translateX(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 @keyframes step-in-back {
-  from { opacity: 0; transform: translateX(-18px); }
-  to   { opacity: 1; transform: translateX(0); }
+  from {
+    opacity: 0;
+    transform: translateX(-18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
-.step-enter      { animation: step-in      var(--duration-base) var(--ease-out) both; }
-.step-enter-back { animation: step-in-back var(--duration-base) var(--ease-out) both; }
+.step-enter {
+  animation: step-in var(--duration-base) var(--ease-out) both;
+}
+.step-enter-back {
+  animation: step-in-back var(--duration-base) var(--ease-out) both;
+}
 
 /* ----------------------------------------------------------
    MATCH MOMENT ANIMATION
@@ -483,14 +511,16 @@ body {
 }
 
 .graph-node--response {
-  animation: node-pulse var(--duration-pulse) var(--ease-base) var(--duration-pulse) both;
+  animation: node-pulse var(--duration-pulse) var(--ease-base)
+    var(--duration-pulse) both;
 }
 
 .graph-line--active {
   stroke: var(--color-graph-active);
   stroke-dasharray: 100%;
   stroke-dashoffset: 100%;
-  animation: line-draw var(--duration-match) var(--ease-out) calc(var(--duration-pulse) * 2) forwards;
+  animation: line-draw var(--duration-match) var(--ease-out)
+    calc(var(--duration-pulse) * 2) forwards;
   opacity: var(--graph-line-opacity-active);
 }
 
