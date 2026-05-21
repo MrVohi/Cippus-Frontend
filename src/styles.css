@@ -1,9 +1,9 @@
-@import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Spectral:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap');
+﻿@import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Spectral:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap');
 @import 'tailwindcss';
 @source '../src/**/*.{tsx,ts,jsx,js}';
 
 /* ============================================================
-   CIPPUS — Design Tokens
+   CIPPUS â€” Design Tokens
    Roman road marker. Carved by those who passed.
    Found by those still on the way.
    ============================================================ */
@@ -11,11 +11,11 @@
 :root {
 
   /* ----------------------------------------------------------
-     PALETTE — Light mode (road in daylight)
+     PALETTE â€” Light mode (road in daylight)
   ---------------------------------------------------------- */
 
   --iron: #2B2520;
-  /* Darkest — text, strong UI elements */
+  /* Darkest â€” text, strong UI elements */
   --shadow-stone: #5C5248;
   /* Secondary text, borders */
   --worn-limestone: #8C8074;
@@ -27,10 +27,10 @@
   --chalk: #F5F0E8;
   /* Page background */
   --ember: #B85C28;
-  /* Accent — active states, match moment, primary CTAs */
+  /* Accent â€” active states, match moment, primary CTAs */
 
   /* ----------------------------------------------------------
-     SEMANTIC TOKENS — Light mode
+     SEMANTIC TOKENS â€” Light mode
   ---------------------------------------------------------- */
 
   --color-bg: var(--pale-stone);
@@ -77,23 +77,23 @@
   /* Body, UI copy, log entries */
 
   --text-xs: 0.75rem;
-  /* 12px — labels, timestamps, meta */
+  /* 12px â€” labels, timestamps, meta */
   --text-sm: 0.875rem;
-  /* 14px — secondary UI, captions */
+  /* 14px â€” secondary UI, captions */
   --text-base: 1rem;
-  /* 16px — body text */
+  /* 16px â€” body text */
   --text-lg: 1.125rem;
-  /* 18px — lead text */
+  /* 18px â€” lead text */
   --text-xl: 1.25rem;
-  /* 20px — card titles */
+  /* 20px â€” card titles */
   --text-2xl: 1.5rem;
-  /* 24px — section headings */
+  /* 24px â€” section headings */
   --text-3xl: 1.875rem;
-  /* 30px — page headings */
+  /* 30px â€” page headings */
   --text-4xl: 2.25rem;
-  /* 36px — display */
+  /* 36px â€” display */
   --text-5xl: 3rem;
-  /* 48px — hero display */
+  /* 48px â€” hero display */
 
   --leading-tight: 1.25;
   --leading-snug: 1.375;
@@ -144,7 +144,7 @@
   --radius-full: 9999px;
 
   /* ----------------------------------------------------------
-     SHADOWS — Flat and minimal, no depth theatre
+     SHADOWS â€” Flat and minimal, no depth theatre
   ---------------------------------------------------------- */
 
   --shadow-sm: 0 1px 2px rgba(43, 37, 32, 0.06);
@@ -152,7 +152,7 @@
   --shadow-lg: 0 4px 16px rgba(43, 37, 32, 0.10);
 
   /* ----------------------------------------------------------
-     MOTION — Match moment principle
+     MOTION â€” Match moment principle
   ---------------------------------------------------------- */
 
   --duration-fast: 180ms;
@@ -169,13 +169,13 @@
   --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
 
   /* ----------------------------------------------------------
-     GRAPH — Living connection system
+     GRAPH â€” Living connection system
   ---------------------------------------------------------- */
 
   --graph-node-size-sm: 4px;
   --graph-node-size-md: 6px;
   --graph-node-size-lg: 10px;
-  /* Anchor node — largest */
+  /* Anchor node â€” largest */
   --graph-line-width: 1.5px;
   --graph-line-opacity-dormant: 0.4;
   --graph-line-opacity-active: 0.85;
@@ -184,14 +184,14 @@
 
 
 /* ============================================================
-   DARK MODE — Road at dusk
+   DARK MODE â€” Road at dusk
    ============================================================ */
 
 .dark,
 [data-theme="dark"] {
 
   /* ----------------------------------------------------------
-     PALETTE — Dark mode
+     PALETTE â€” Dark mode
   ---------------------------------------------------------- */
 
   --deep-shadow: #1A1714;
@@ -207,7 +207,7 @@
   /* Ember brighter against dark */
 
   /* ----------------------------------------------------------
-     SEMANTIC TOKENS — Dark mode overrides
+     SEMANTIC TOKENS â€” Dark mode overrides
   ---------------------------------------------------------- */
 
   --color-bg: var(--deep-shadow);
@@ -283,7 +283,7 @@ body {
   font-family: var(--font-body);
 }
 
-/* Wordmark — the name Cippus */
+/* Wordmark â€” the name Cippus */
 .wordmark {
   font-family: var(--font-display);
   font-weight: 400;
@@ -292,7 +292,7 @@ body {
   color: var(--color-text-primary);
 }
 
-/* Label — small all-caps category/meta text */
+/* Label â€” small all-caps category/meta text */
 .label {
   font-family: var(--font-body);
   font-size: var(--text-xs);
@@ -302,7 +302,7 @@ body {
   color: var(--color-text-muted);
 }
 
-/* Stage label — where a builder currently is */
+/* Stage label â€” where a builder currently is */
 .stage-label {
   font-family: var(--font-body);
   font-size: var(--text-xs);
@@ -332,14 +332,14 @@ body {
   border-color: var(--color-accent);
 }
 
-/* Match moment card — ember accent treatment */
+/* Match moment card â€” ember accent treatment */
 .log-card--matched {
   background: var(--color-match-bg);
   border-color: var(--color-match-border);
   border-left-width: 3px;
 }
 
-/* Match moment surface — inline callout inside a log */
+/* Match moment surface â€” inline callout inside a log */
 .match-surface {
   background: var(--color-match-bg);
   border-left: 3px solid var(--color-accent);
@@ -430,8 +430,25 @@ body {
 }
 
 /* ----------------------------------------------------------
+   SETUP WIZARD STEP TRANSITION
+---------------------------------------------------------- */
+
+@keyframes step-in {
+  from { opacity: 0; transform: translateX(18px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes step-in-back {
+  from { opacity: 0; transform: translateX(-18px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.step-enter      { animation: step-in      var(--duration-base) var(--ease-out) both; }
+.step-enter-back { animation: step-in-back var(--duration-base) var(--ease-out) both; }
+
+/* ----------------------------------------------------------
    MATCH MOMENT ANIMATION
-   Sequence: pulse → response → draw → settle
+   Sequence: pulse â†’ response â†’ draw â†’ settle
 ---------------------------------------------------------- */
 
 @keyframes node-pulse {

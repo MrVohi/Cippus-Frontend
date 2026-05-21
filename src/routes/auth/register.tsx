@@ -109,7 +109,7 @@ function RegisterPage() {
             const body = await res.json();
             useAuthStore.getState().setUser(body.user);
             useAuthStore.getState().setToken(body.accessToken);
-            navigate({ to: "/" });
+            navigate({ to: "/auth/setup" });
         } catch {
             setRegisterError("Something went wrong. Please try again.");
         }

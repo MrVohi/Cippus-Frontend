@@ -3,6 +3,7 @@ import { create } from 'zustand'
 interface User {
     id: number,
     username: string,
+    bio: string,
     role: "user" | "moderator" | "admin",
     avatarUrl: string | null
 }
