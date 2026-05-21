@@ -105,7 +105,11 @@ function RegisterPage() {
                 body: JSON.stringify({ ...data, captcha: token }),
                 credentials: "include",
             });
-            if (!res.ok) throw new Error("Register failed");
+            if (!res.ok) {
+                const errorBody = await res.json();
+                setRegisterError(errorBody.error || "Something went wrong. Please try again.");
+                return;
+            }
             const body = await res.json();
             useAuthStore.getState().setUser(body.user);
             useAuthStore.getState().setToken(body.accessToken);
