@@ -153,7 +153,7 @@ function RouteComponent() {
                                 <StepIntro eyebrow="Step 1 - Settings" title="A bit about you, if you'd like." supporting="All of this is optional. You can change it any time." />
                                 <div style={{ display: 'flex', alignItems: 'center', gap: 18 }}>
                                     <div style={{ width: 72, height: 84, background: 'var(--color-border)', border: '1px solid var(--color-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, clipPath: 'polygon(20% 0, 80% 0, 92% 8%, 100% 18%, 100% 100%, 0 100%, 0 18%, 8% 8%)' }}>
-                                        <span style={{ fontFamily: 'var(--font-display)', fontSize: 38, color: 'var(--color-text-secondary)', lineHeight: 1 }}>{username?.[0]?.toUpperCase() ?? '?'}</span>
+                                        <span style={{ fontFamily: 'var(--font-display)', fontSize: 38, color: 'var(--color-text-secondary)', lineHeight: 1 }}>{username.length > 0 ? username[0].toUpperCase() : '?'}</span>
                                     </div>
                                     <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
                                         <button type="button" disabled style={{ background: 'transparent', border: 'none', padding: 0, cursor: 'not-allowed', fontFamily: 'var(--font-body)', fontSize: 14, color: 'var(--color-text-muted)', borderBottom: '1px solid var(--color-border)', paddingBottom: 2, alignSelf: 'flex-start', opacity: 0.4 }}>Add a photo</button>

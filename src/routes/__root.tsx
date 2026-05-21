@@ -12,7 +12,8 @@ import TanStackQueryDevtools from '../integrations/tanstack-query/devtools'
 import appCss from '../styles.css?url'
 
 import type { QueryClient } from '@tanstack/react-query'
-import { type AuthStore, useAuthStore } from '#/stores/useAuthStore'
+import type { AuthStore } from '#/stores/useAuthStore'
+import { useAuthStore } from '#/stores/useAuthStore'
 import { useEffect } from 'react'
 
 interface MyRouterContext {
@@ -50,9 +51,9 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     async function hydrate() {
-      const user = useAuthStore.getState().user;
+      const currentUser = useAuthStore.getState().user;
 
-      if (user != null) {
+      if (currentUser != null) {
         return
       }
 

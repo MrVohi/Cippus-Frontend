@@ -73,7 +73,7 @@ function LoginPage() {
                         <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
                             <Label htmlFor="email" className="label">EMAIL</Label>
                             <Input id="email" placeholder="you@workshop" className="border-0 border-b border-(--color-border) rounded-none bg-transparent px-0 focus-visible:ring-0 focus-visible:ring-offset-0" {...register("email")} />
-                            {errors.email && <p style={{ margin: 0, fontSize: 12, color: "var(--color-accent)", lineHeight: 1.45 }}>{errors.email?.message}</p>}
+                            {errors.email && <p style={{ margin: 0, fontSize: 12, color: "var(--color-accent)", lineHeight: 1.45 }}>{errors.email.message}</p>}
                         </div>
 
                         <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
@@ -82,7 +82,7 @@ function LoginPage() {
                                 <Link to="/auth/password-reset" style={{ fontSize: 12, color: "var(--color-text-muted)", textDecoration: "none", borderBottom: "1px solid var(--color-border)", paddingBottom: 1 }}>Forgot it?</Link>
                             </div>
                             <Input id="password" type="password" className="border-0 border-b border-(--color-border) rounded-none bg-transparent px-0 focus-visible:ring-0 focus-visible:ring-offset-0" {...register("password")} />
-                            {errors.password && <p style={{ margin: 0, fontSize: 12, color: "var(--color-accent)", lineHeight: 1.45 }}>{errors.password?.message}</p>}
+                            {errors.password && <p style={{ margin: 0, fontSize: 12, color: "var(--color-accent)", lineHeight: 1.45 }}>{errors.password.message}</p>}
                         </div>
 
                         <button type="submit" className="btn-primary w-full">Continue building</button>

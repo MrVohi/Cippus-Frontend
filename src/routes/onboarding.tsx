@@ -211,7 +211,7 @@ function Artifact() {
 }
 
 function LogCard({ log }: { log: LogEntry }) {
-  const initial = log.author.username[0]?.toUpperCase() ?? '?'
+  const initial = log.author.username.length > 0 ? log.author.username[0].toUpperCase() : '?'
   const category = log.categories[0]?.name ?? ''
 
   return (
