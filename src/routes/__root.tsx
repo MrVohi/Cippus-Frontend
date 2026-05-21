@@ -45,28 +45,29 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
   shellComponent: RootDocument,
 })
 
-
 function RootDocument({ children }: { children: React.ReactNode }) {
-  const user = useAuthStore(state => state.user)
+  const user = useAuthStore((state) => state.user)
 
   useEffect(() => {
     async function hydrate() {
-      const currentUser = useAuthStore.getState().user;
+      const currentUser = useAuthStore.getState().user
 
       if (currentUser != null) {
         return
       }
 
       try {
-        const response = await fetch(import.meta.env.VITE_API_URL + "/api/v1/auth/refresh", { method: "POST", credentials: "include" });
+        const response = await fetch(
+          import.meta.env.VITE_API_URL + '/api/v1/auth/refresh',
+          { method: 'POST', credentials: 'include' },
+        )
 
         if (response.ok) {
-          const data = await response.json();
-          useAuthStore.getState().setUser(data.user);
-          useAuthStore.getState().setToken(data.accessToken);
+          const data = await response.json()
+          useAuthStore.getState().setUser(data.user)
+          useAuthStore.getState().setToken(data.accessToken)
         }
-
-      } catch (error) { }
+      } catch (error) {}
     }
     hydrate()
   }, [])
@@ -76,15 +77,14 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       <head>
         <HeadContent />
       </head>
-      <body className='min-h-screen flex flex-col'>
-        <nav className='flex justify-between items-center px-6 py-1 bg-(--color-nav-bg) border-b border-(--color-nav-border)'>
-
-          <div className='flex items-center gap-4'>
-            <Link className='flex items-center gap-4' to="/">
+      <body className="min-h-screen flex flex-col">
+        <nav className="flex justify-between items-center px-6 py-1 bg-(--color-nav-bg) border-b border-(--color-nav-border)">
+          <div className="flex items-center gap-4">
+            <Link className="flex items-center gap-4" to="/">
               <p>logo</p>
-              <p className='font-display font-semibold'>Cippus</p>
+              <p className="font-display font-semibold">Cippus</p>
             </Link>
-            <div className='text-(--color-text-muted) flex gap-8 ml-5'>
+            <div className="text-(--color-text-muted) flex gap-8 ml-5">
               <Link to="/">Home</Link>
               <Link to="/logs">Logs</Link>
               <span>Profile</span>
@@ -97,12 +97,15 @@ function RootDocument({ children }: { children: React.ReactNode }) {
               <span>avatar</span>
               <Link to="/logs/new"> · START LOG</Link>
               <Link to="/messages"> · NEW MESSAGE</Link>
-              {(user.role === "admin" || user.role === "moderator") && <span> · ADMIN</span>}
+              {(user.role === 'admin' || user.role === 'moderator') && (
+                <span> · ADMIN</span>
+              )}
             </div>
           ) : (
-            <Link to="/auth/login" className="btn-ghost">LOG IN</Link>
+            <Link to="/auth/login" className="btn-ghost">
+              LOG IN
+            </Link>
           )}
-
         </nav>
         {children}
         <TanStackDevtools
@@ -119,6 +122,6 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         />
         <Scripts />
       </body>
-    </html >
+    </html>
   )
 }
