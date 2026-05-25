@@ -86,6 +86,7 @@ function RegisterPage() {
     const captchaRef = useRef<ReCAPTCHA>(null);
     const navigate = useNavigate();
     const [registerError, setRegisterError] = useState<string | null>(null);
+    const [usernameSuggestion, setUsernameSuggestion] = useState<string | null>(null);
 
     const { register, handleSubmit, formState: { errors } } = useForm<RegisterFormData>({
         resolver: zodResolver(registerSchema),
@@ -106,10 +107,13 @@ function RegisterPage() {
                 credentials: "include",
             });
             if (!res.ok) {
-                const errorBody = await res.json();
-                setRegisterError(errorBody.error || "Something went wrong. Please try again.");
-                return;
+            const errorBody = await res.json();
+            setRegisterError(errorBody.error || "Something went wrong. Please try again.");
+            if (errorBody.suggestion) {
+            setUsernameSuggestion(errorBody.suggestion);
             }
+    return;
+}
             const body = await res.json();
             useAuthStore.getState().setUser(body.user);
             useAuthStore.getState().setToken(body.accessToken);
@@ -143,6 +147,12 @@ function RegisterPage() {
                     {registerError && (
                         <p style={{ margin: "0 0 16px", fontFamily: "var(--font-body)", fontSize: 14, color: "var(--color-accent)", textAlign: "center" }}>
                             {registerError}
+                        </p>
+                    )}
+
+                    {usernameSuggestion && (
+                        <p style={{ margin: "0 0 16px", fontFamily: "var(--font-body)", fontSize: 14, color: "var(--color-text-secondary)", textAlign: "center" }}>
+                         How about <strong>@{usernameSuggestion}</strong>?
                         </p>
                     )}
 
