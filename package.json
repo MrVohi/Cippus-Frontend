@@ -13,7 +13,8 @@
     "lint": "eslint",
     "format": "prettier --check .",
     "check": "prettier --write . && eslint --fix",
-    "start": "node --import ./.output/server/instrument.server.mjs .output/server/index.mjs"
+    "start": "node --import ./.output/server/instrument.server.mjs .output/server/index.mjs",
+    "prepare": "husky"
   },
   "dependencies": {
     "@emnapi/core": "^1.10.0",
@@ -57,11 +58,16 @@
     "@types/react-google-recaptcha": "^2.1.9",
     "@vitejs/plugin-react": "^6.0.1",
     "cross-env": "^10.1.0",
+    "husky": "^9.1.7",
     "jsdom": "^28.1.0",
+    "lint-staged": "^17.0.5",
     "prettier": "^3.8.1",
     "typescript": "^6.0.2",
     "vite": "^8.0.0",
     "vitest": "^4.1.5"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,mjs,json,yaml,css,md}": "prettier --write"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
