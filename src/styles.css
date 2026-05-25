@@ -524,6 +524,37 @@ body {
   opacity: var(--graph-line-opacity-active);
 }
 
+@keyframes row-enter {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.row-enter {
+  animation: row-enter var(--duration-base) var(--ease-out) both;
+}
+
+@keyframes cip-live {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(0.75);
+  }
+}
+
+.live-dot {
+  animation: cip-live 2.4s var(--ease-base) infinite;
+}
+
 /* ----------------------------------------------------------
    PAGE LAYOUT
 ---------------------------------------------------------- */
