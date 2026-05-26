@@ -86,17 +86,17 @@ function RootDocument({ children }: { children: React.ReactNode }) {
             </Link>
             <div className="text-(--color-text-muted) flex gap-8 ml-5">
               <Link to="/">Home</Link>
-              <Link to="/logs">Logs</Link>
+              <Link to={"/logs" as any}>Logs</Link>
               <span>Profile</span>
-              <Link to="/search">Search</Link>
+              <Link to={"/logs" as any}>Search</Link> // link to search
             </div>
           </div>
 
           {user ? (
             <div>
               <span>avatar</span>
-              <Link to="/logs/new"> · START LOG</Link>
-              <Link to="/messages"> · NEW MESSAGE</Link>
+              <Link to={"/logs" as any}> · START LOG</Link>
+              <Link to={"/logs" as any}> · NEW MESSAGE</Link> // link to message
               {(user.role === 'admin' || user.role === 'moderator') && (
                 <span> · ADMIN</span>
               )}

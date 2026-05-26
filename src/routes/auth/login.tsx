@@ -178,8 +178,8 @@ function LoginPage() {
                 <Label htmlFor="password" className="label">
                   PASSWORD
                 </Label>
-                <Link
-                  to="/auth/password-reset"
+                <a
+                  href="/auth/password-reset"
                   style={{
                     fontSize: 12,
                     color: 'var(--color-text-muted)',
@@ -189,7 +189,7 @@ function LoginPage() {
                   }}
                 >
                   Forgot it?
-                </Link>
+                </a>
               </div>
               <Input
                 id="password"
