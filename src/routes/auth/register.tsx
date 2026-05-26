@@ -6,11 +6,11 @@ import { useAuthStore } from '#/stores/useAuthStore'
 import { useEffect, useRef, useState } from 'react'
 import ReCAPTCHA from 'react-google-recaptcha'
 import { CippusMark } from '#/components/CippusMark'
- 
+
 export const Route = createFileRoute('/auth/register')({
   component: RegisterPage,
 })
- 
+
 const registerSchema = z
   .object({
     username: z.string().min(2, 'Please enter a username'),
@@ -22,9 +22,9 @@ const registerSchema = z
     message: 'Passwords do not match',
     path: ['confirmPassword'],
   })
- 
+
 type RegisterFormData = z.infer<typeof registerSchema>
- 
+
 type FieldProps = {
   id: string
   label: string
@@ -36,7 +36,7 @@ type FieldProps = {
   error?: string
   registerProps?: React.InputHTMLAttributes<HTMLInputElement>
 }
- 
+
 function Field({
   id,
   label,
@@ -139,7 +139,7 @@ function Field({
     </div>
   )
 }
- 
+
 function ClientOnly({ children }: { children: React.ReactNode }) {
   const [mounted, setMounted] = useState(false)
   useEffect(() => {
@@ -148,75 +148,102 @@ function ClientOnly({ children }: { children: React.ReactNode }) {
   if (!mounted) return null
   return <>{children}</>
 }
- 
+
 function RegisterPage() {
   const captchaRef = useRef<ReCAPTCHA>(null)
   const navigate = useNavigate()
   const [registerError, setRegisterError] = useState<string | null>(null)
-  const [usernameSuggestion, setUsernameSuggestion] = useState<string | null>(null)
- 
-  const { register, handleSubmit, setValue, formState: { errors } } = useForm<RegisterFormData>({
+  const [usernameSuggestion, setUsernameSuggestion] = useState<string | null>(
+    null,
+  )
+
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
-    defaultValues: { username: '', email: '', password: '', confirmPassword: '' },
+    defaultValues: {
+      username: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
+    },
   })
- 
+
   async function onSubmit(data: RegisterFormData) {
     const token = captchaRef.current?.getValue()
     if (!token) {
       setRegisterError('Please complete the captcha')
       return
     }
- 
+
     setRegisterError(null)
     setUsernameSuggestion(null)
- 
+
     try {
-      const res = await fetch(import.meta.env.VITE_API_URL + '/api/v1/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...data, captcha: token }),
-        credentials: 'include',
-      })
+      const res = await fetch(
+        import.meta.env.VITE_API_URL + '/api/v1/auth/register',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ...data, captcha: token }),
+          credentials: 'include',
+        },
+      )
       if (!res.ok) {
-      const errorBody = await res.json()
-      console.log('errorBody:', errorBody)
-      setRegisterError(errorBody.error || 'Something went wrong. Please try again.')
-      if (errorBody.suggestion) {
-        setUsernameSuggestion(errorBody.suggestion)
+        const errorBody = await res.json()
+        console.log('errorBody:', errorBody)
+        setRegisterError(
+          errorBody.error || 'Something went wrong. Please try again.',
+        )
+        if (errorBody.suggestion) {
+          setUsernameSuggestion(errorBody.suggestion)
+        }
+        return
       }
-      return
+      const body = await res.json()
+      useAuthStore.getState().setUser(body.user)
+      useAuthStore.getState().setToken(body.accessToken)
+      navigate({ to: '/auth/setup' })
+    } catch (e) {
+      console.log('catch error:', e)
+      setRegisterError('Something went wrong. Please try again.')
     }
-    const body = await res.json()
-    useAuthStore.getState().setUser(body.user)
-    useAuthStore.getState().setToken(body.accessToken)
-    navigate({ to: '/auth/setup' })
-  } catch (e) {
-    console.log('catch error:', e)
-    setRegisterError('Something went wrong. Please try again.')
   }
-  }
- 
+
   function applySuggestion() {
     if (!usernameSuggestion) return
     setValue('username', usernameSuggestion)
     setRegisterError(null)
     setUsernameSuggestion(null)
   }
- 
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
       <main
         className="flex-1 flex items-start md:items-center justify-center"
-        style={{ padding: 'clamp(16px, 2.5vh, 56px) 24px clamp(12px, 1.5vh, 32px)' }}
+        style={{
+          padding: 'clamp(16px, 2.5vh, 56px) 24px clamp(12px, 1.5vh, 32px)',
+        }}
       >
         <section
           aria-labelledby="register-heading"
-          style={{ width: '100%', maxWidth: 'clamp(360px, 22vw, 480px)', display: 'flex', flexDirection: 'column' }}
+          style={{
+            width: '100%',
+            maxWidth: 'clamp(360px, 22vw, 480px)',
+            display: 'flex',
+            flexDirection: 'column',
+          }}
         >
-          <h1 id="register-heading" style={{ position: 'absolute', left: -9999 }}>
+          <h1
+            id="register-heading"
+            style={{ position: 'absolute', left: -9999 }}
+          >
             Start a log on Cippus
           </h1>
- 
+
           <div
             style={{
               display: 'flex',
@@ -228,7 +255,10 @@ function RegisterPage() {
           >
             <div
               className="[&>svg]:w-full [&>svg]:h-full"
-              style={{ width: 'clamp(60px, 9vh, 144px)', height: 'clamp(60px, 9vh, 144px)' }}
+              style={{
+                width: 'clamp(60px, 9vh, 144px)',
+                height: 'clamp(60px, 9vh, 144px)',
+              }}
             >
               <CippusMark size={144} />
             </div>
@@ -262,7 +292,7 @@ function RegisterPage() {
               What are you working on?
             </p>
           </div>
- 
+
           {registerError && (
             <p
               style={{
@@ -276,7 +306,7 @@ function RegisterPage() {
               {registerError}
             </p>
           )}
- 
+
           {usernameSuggestion && (
             <p
               style={{
@@ -309,10 +339,14 @@ function RegisterPage() {
               ?
             </p>
           )}
- 
+
           <form
             noValidate
-            style={{ display: 'flex', flexDirection: 'column', gap: 'clamp(10px, 1.5vh, 24px)' }}
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 'clamp(10px, 1.5vh, 24px)',
+            }}
             onSubmit={handleSubmit(onSubmit)}
           >
             <Field
@@ -324,7 +358,7 @@ function RegisterPage() {
               error={errors.email?.message}
               registerProps={register('email')}
             />
- 
+
             <Field
               id="username"
               label="Your builder name"
@@ -336,7 +370,7 @@ function RegisterPage() {
               error={errors.username?.message}
               registerProps={register('username')}
             />
- 
+
             <Field
               id="password"
               label="Password"
@@ -347,7 +381,7 @@ function RegisterPage() {
               error={errors.password?.message}
               registerProps={register('password')}
             />
- 
+
             <Field
               id="confirmPassword"
               label="Confirm password"
@@ -357,13 +391,16 @@ function RegisterPage() {
               error={errors.confirmPassword?.message}
               registerProps={register('confirmPassword')}
             />
- 
+
             <ClientOnly>
               <div style={{ display: 'flex', justifyContent: 'center' }}>
-                <ReCAPTCHA ref={captchaRef} sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY} />
+                <ReCAPTCHA
+                  ref={captchaRef}
+                  sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
+                />
               </div>
             </ClientOnly>
- 
+
             <button
               type="submit"
               style={{
@@ -384,8 +421,16 @@ function RegisterPage() {
             >
               Start building
             </button>
- 
-            <p style={{ margin: 0, fontSize: 12, color: 'var(--color-text-muted)', textAlign: 'center', lineHeight: 1.55 }}>
+
+            <p
+              style={{
+                margin: 0,
+                fontSize: 12,
+                color: 'var(--color-text-muted)',
+                textAlign: 'center',
+                lineHeight: 1.55,
+              }}
+            >
               By starting, you agree to the{' '}
               <a
                 href="#"
@@ -401,7 +446,7 @@ function RegisterPage() {
               .
             </p>
           </form>
- 
+
           <div
             style={{
               marginTop: 'clamp(12px, 1.8vh, 40px)',
@@ -411,7 +456,14 @@ function RegisterPage() {
               gap: 14,
             }}
           >
-            <span style={{ height: 1, flex: 1, maxWidth: 60, background: 'var(--color-border)' }} />
+            <span
+              style={{
+                height: 1,
+                flex: 1,
+                maxWidth: 60,
+                background: 'var(--color-border)',
+              }}
+            />
             <p
               style={{
                 margin: 0,
@@ -435,11 +487,18 @@ function RegisterPage() {
                 Log in
               </Link>
             </p>
-            <span style={{ height: 1, flex: 1, maxWidth: 60, background: 'var(--color-border)' }} />
+            <span
+              style={{
+                height: 1,
+                flex: 1,
+                maxWidth: 60,
+                background: 'var(--color-border)',
+              }}
+            />
           </div>
         </section>
       </main>
- 
+
       <footer
         style={{
           padding: '20px 24px 28px',
@@ -469,4 +528,3 @@ function RegisterPage() {
     </div>
   )
 }
- 
