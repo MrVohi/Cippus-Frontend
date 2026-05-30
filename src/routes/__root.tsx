@@ -88,7 +88,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
               <Link to="/">Home</Link>
               <Link to="/logs">Logs</Link>
               <span>Profile</span>
-              <Link to='/search'>Search</Link> 
+              <Link to="/search">Search</Link>
             </div>
           </div>
 
@@ -96,7 +96,10 @@ function RootDocument({ children }: { children: React.ReactNode }) {
             <div>
               <span>avatar</span>
               <Link to="/logs"> · START LOG</Link> // file logs/start-log
-              <Link to="/messages/messages" className="btn-ghost"> · NEW MESSAGE</Link> 
+              <Link to="/messages/messages" className="btn-ghost">
+                {' '}
+                · NEW MESSAGE
+              </Link>
               {(user.role === 'admin' || user.role === 'moderator') && (
                 <span> · ADMIN</span>
               )}
