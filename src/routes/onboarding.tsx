@@ -428,7 +428,7 @@ function OnboardingPage() {
   const navigate = useNavigate()
 
   function handleStartLog() {
-    navigate({ to: '/logs/new' })
+    navigate({ to: '/logs' })  // Create file logs/new
   }
 
   return (
