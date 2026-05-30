@@ -11,6 +11,9 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as SearchIndexRouteImport } from './routes/search/index'
+import { Route as LogsIndexRouteImport } from './routes/logs/index'
+import { Route as MessagesMessagesRouteImport } from './routes/messages/messages'
 import { Route as AuthSetupRouteImport } from './routes/auth/setup'
 import { Route as AuthRegisterRouteImport } from './routes/auth/register'
 import { Route as AuthPasswordResetRouteImport } from './routes/auth/password-reset'
@@ -24,6 +27,21 @@ const OnboardingRoute = OnboardingRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SearchIndexRoute = SearchIndexRouteImport.update({
+  id: '/search/',
+  path: '/search/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LogsIndexRoute = LogsIndexRouteImport.update({
+  id: '/logs/',
+  path: '/logs/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MessagesMessagesRoute = MessagesMessagesRouteImport.update({
+  id: '/messages/messages',
+  path: '/messages/messages',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthSetupRoute = AuthSetupRouteImport.update({
@@ -54,6 +72,9 @@ export interface FileRoutesByFullPath {
   '/auth/password-reset': typeof AuthPasswordResetRoute
   '/auth/register': typeof AuthRegisterRoute
   '/auth/setup': typeof AuthSetupRoute
+  '/messages/messages': typeof MessagesMessagesRoute
+  '/logs/': typeof LogsIndexRoute
+  '/search/': typeof SearchIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -62,6 +83,9 @@ export interface FileRoutesByTo {
   '/auth/password-reset': typeof AuthPasswordResetRoute
   '/auth/register': typeof AuthRegisterRoute
   '/auth/setup': typeof AuthSetupRoute
+  '/messages/messages': typeof MessagesMessagesRoute
+  '/logs': typeof LogsIndexRoute
+  '/search': typeof SearchIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -71,6 +95,9 @@ export interface FileRoutesById {
   '/auth/password-reset': typeof AuthPasswordResetRoute
   '/auth/register': typeof AuthRegisterRoute
   '/auth/setup': typeof AuthSetupRoute
+  '/messages/messages': typeof MessagesMessagesRoute
+  '/logs/': typeof LogsIndexRoute
+  '/search/': typeof SearchIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -81,6 +108,9 @@ export interface FileRouteTypes {
     | '/auth/password-reset'
     | '/auth/register'
     | '/auth/setup'
+    | '/messages/messages'
+    | '/logs/'
+    | '/search/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -89,6 +119,9 @@ export interface FileRouteTypes {
     | '/auth/password-reset'
     | '/auth/register'
     | '/auth/setup'
+    | '/messages/messages'
+    | '/logs'
+    | '/search'
   id:
     | '__root__'
     | '/'
@@ -97,6 +130,9 @@ export interface FileRouteTypes {
     | '/auth/password-reset'
     | '/auth/register'
     | '/auth/setup'
+    | '/messages/messages'
+    | '/logs/'
+    | '/search/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -106,6 +142,9 @@ export interface RootRouteChildren {
   AuthPasswordResetRoute: typeof AuthPasswordResetRoute
   AuthRegisterRoute: typeof AuthRegisterRoute
   AuthSetupRoute: typeof AuthSetupRoute
+  MessagesMessagesRoute: typeof MessagesMessagesRoute
+  LogsIndexRoute: typeof LogsIndexRoute
+  SearchIndexRoute: typeof SearchIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -122,6 +161,27 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/search/': {
+      id: '/search/'
+      path: '/search'
+      fullPath: '/search/'
+      preLoaderRoute: typeof SearchIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/logs/': {
+      id: '/logs/'
+      path: '/logs'
+      fullPath: '/logs/'
+      preLoaderRoute: typeof LogsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/messages/messages': {
+      id: '/messages/messages'
+      path: '/messages/messages'
+      fullPath: '/messages/messages'
+      preLoaderRoute: typeof MessagesMessagesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth/setup': {
@@ -162,6 +222,9 @@ const rootRouteChildren: RootRouteChildren = {
   AuthPasswordResetRoute: AuthPasswordResetRoute,
   AuthRegisterRoute: AuthRegisterRoute,
   AuthSetupRoute: AuthSetupRoute,
+  MessagesMessagesRoute: MessagesMessagesRoute,
+  LogsIndexRoute: LogsIndexRoute,
+  SearchIndexRoute: SearchIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
