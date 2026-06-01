@@ -3,6 +3,7 @@ import {
   Link,
   Scripts,
   createRootRouteWithContext,
+  useRouterState,
 } from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
@@ -47,6 +48,8 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   const user = useAuthStore((state) => state.user)
+  const { location } = useRouterState()
+  const isLanding = location.pathname === '/'
 
   useEffect(() => {
     async function hydrate() {
@@ -78,35 +81,39 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body className="min-h-screen flex flex-col">
-        <nav className="flex justify-between items-center px-6 py-1 bg-(--color-nav-bg) border-b border-(--color-nav-border)">
-          <div className="flex items-center gap-4">
-            <Link className="flex items-center gap-4" to="/">
-              <p>logo</p>
-              <p className="font-display font-semibold">Cippus</p>
-            </Link>
-            <div className="text-(--color-text-muted) flex gap-8 ml-5">
-              <Link to="/">Home</Link>
-              <Link to="/logs">Logs</Link>
-              <span>Profile</span>
-              <Link to="/search">Search</Link>
+        {!isLanding && (
+          <nav className="flex justify-between items-center px-6 py-1 bg-(--color-nav-bg) border-b border-(--color-nav-border)">
+            <div className="flex items-center gap-4">
+              <Link className="flex items-center gap-4" to="/">
+                <p>logo</p>
+                <p className="font-display font-semibold">Cippus</p>
+              </Link>
+              <div className="text-(--color-text-muted) flex gap-8 ml-5">
+                <Link to="/">Home</Link>
+                <Link to="/logs" search={{ sort: 'recent' }}>
+                  Logs
+                </Link>
+                <span>Profile</span>
+                <Link to="/search">Search</Link>
+              </div>
             </div>
-          </div>
 
-          {user ? (
-            <div>
-              <span>avatar</span>
-              <Link to="/logs/new"> · START LOG</Link>
-              <Link to="/messages"> · NEW MESSAGE</Link>
-              {(user.role === 'admin' || user.role === 'moderator') && (
-                <span> · ADMIN</span>
-              )}
-            </div>
-          ) : (
-            <Link to="/auth/login" className="btn-ghost">
-              LOG IN
-            </Link>
-          )}
-        </nav>
+            {user ? (
+              <div>
+                <span>avatar</span>
+                <Link to="/logs/new"> · START LOG</Link>
+                <Link to="/messages"> · NEW MESSAGE</Link>
+                {(user.role === 'admin' || user.role === 'moderator') && (
+                  <span> · ADMIN</span>
+                )}
+              </div>
+            ) : (
+              <Link to="/auth/login" className="btn-ghost">
+                LOG IN
+              </Link>
+            )}
+          </nav>
+        )}
         {children}
         <TanStackDevtools
           config={{

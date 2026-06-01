@@ -5,37 +5,34 @@ import { LogRow } from '#/components/LogRow'
 import { generateText } from '@tiptap/core'
 import StarterKit from '@tiptap/starter-kit'
 
-const CATEGORIES = [
-  'All',
-  'Iron',
-  'Wood',
-  'Stone',
-  'Bread',
-  'Ceramics',
-  'Electronics',
-  'Textiles',
-  'Leather',
-  'Glass',
-  'Brewing',
-  'Coffee',
-  'Letterpress',
-  'Restore',
-  'Optics',
-]
-
 export const Route = createFileRoute('/logs/')({
-  validateSearch: (search): { category: string; sort: string } => ({
-    category: typeof search.category === 'string' ? search.category : 'all',
+  validateSearch: (search): { category?: string; sort: string } => ({
+    ...(typeof search.category === 'string' && search.category !== 'all'
+      ? { category: search.category }
+      : {}),
     sort: typeof search.sort === 'string' ? search.sort : 'recent',
   }),
   component: LogsPage,
 })
 
-async function fetchPosts(category: string, sort: string) {
-  let url = import.meta.env.VITE_API_URL + '/api/v1/logs/'
-  if (category !== 'all') {
-    url = url + '?category=' + category + '&sort' + sort
+type Category = { category_id: number; name: string }
+
+async function fetchCategories(): Promise<Category[]> {
+  const url = import.meta.env.VITE_API_URL + '/api/v1/categories'
+  const res = await fetch(url)
+  if (!res.ok) throw new Error()
+  const data = await res.json()
+  const cats: Category[] = Array.isArray(data.category) ? data.category : []
+  return [{ category_id: 0, name: 'All' }, ...cats]
+}
+
+async function fetchPosts(category: string, sort: string, categoryId?: number) {
+  const params = new URLSearchParams()
+  if (category !== 'all' && categoryId) {
+    params.set('category_id', String(categoryId))
   }
+  params.set('sort', sort)
+  const url = import.meta.env.VITE_API_URL + '/api/v1/logs?' + params.toString()
   const response = await fetch(url)
   if (!response.ok) throw new Error()
   return response.json()
@@ -112,86 +109,106 @@ function SortPills({
 }
 
 function CategoryPills({
+  categories,
   category,
-  onCategoryClick,
+  onAllClick,
 }: {
+  categories: Category[]
   category: string
-  onCategoryClick: (v: string) => void
+  onAllClick: () => void
 }) {
-  const refs = useRef<(HTMLButtonElement | null)[]>([])
+  const allRef = useRef<HTMLButtonElement | null>(null)
   const [indicator, setIndicator] = useState({ left: 0, width: 0, top: 0 })
+  const isAll = category === 'all'
 
   useEffect(() => {
-    const activeIndex = CATEGORIES.findIndex((cat) => {
-      const value = cat === 'All' ? 'all' : cat.toLowerCase()
-      return value === category
-    })
-    const el = refs.current[activeIndex]
-    if (el)
+    const el = allRef.current
+    if (el && isAll)
       setIndicator({
         left: el.offsetLeft,
         width: el.offsetWidth,
         top: el.offsetTop + el.offsetHeight + 4,
       })
-  }, [category])
+  }, [isAll])
 
   return (
     <div className="relative flex items-center flex-wrap gap-y-[10px]">
-      {CATEGORIES.map((cat, i) => {
-        const value = cat === 'All' ? 'all' : cat.toLowerCase()
-        const active = category === value
-        return (
-          <Fragment key={cat}>
-            {i > 0 && (
-              <span
-                aria-hidden
-                className="w-px h-[11px] bg-(--color-border) mx-3.5"
-              />
-            )}
-            <button
-              ref={(el) => {
-                refs.current[i] = el
-              }}
-              type="button"
-              onClick={() => onCategoryClick(value)}
-              className="font-body text-[12px] tracking-[0.1em] uppercase bg-transparent border-none cursor-pointer whitespace-nowrap transition-colors duration-[180ms]"
-              style={{
-                color: active
-                  ? 'var(--color-text-primary)'
-                  : 'var(--color-text-muted)',
-                fontWeight: active ? 500 : 400,
-              }}
-            >
-              {cat}
-            </button>
-          </Fragment>
-        )
-      })}
-      <span
-        aria-hidden
-        className="absolute h-px bg-(--color-text-primary) transition-all duration-[300ms] ease-[cubic-bezier(0.4,0,0.2,1)]"
+      <button
+        ref={allRef}
+        type="button"
+        onClick={onAllClick}
+        className="font-body text-[12px] tracking-[0.1em] uppercase bg-transparent border-none cursor-pointer whitespace-nowrap transition-colors duration-[180ms]"
         style={{
-          left: indicator.left,
-          width: indicator.width,
-          top: indicator.top,
+          color: isAll
+            ? 'var(--color-text-primary)'
+            : 'var(--color-text-muted)',
+          fontWeight: isAll ? 500 : 400,
         }}
-      />
+      >
+        All
+      </button>
+
+      {categories
+        .filter((c) => c.name !== 'All')
+        .map((cat) => (
+          <Fragment key={cat.category_id}>
+            <span
+              aria-hidden
+              className="w-px h-[11px] bg-(--color-border) mx-3.5"
+            />
+            <Link
+              to="/category/$id"
+              params={{ id: cat.name.toLowerCase() }}
+              className="font-body text-[12px] tracking-[0.1em] uppercase no-underline whitespace-nowrap transition-colors duration-[180ms]"
+              style={{ color: 'var(--color-text-muted)', fontWeight: 400 }}
+              onMouseEnter={(e) =>
+                (e.currentTarget.style.color = 'var(--color-text-primary)')
+              }
+              onMouseLeave={(e) =>
+                (e.currentTarget.style.color = 'var(--color-text-muted)')
+              }
+            >
+              {cat.name}
+            </Link>
+          </Fragment>
+        ))}
+
+      {isAll && (
+        <span
+          aria-hidden
+          className="absolute h-px bg-(--color-text-primary) transition-all duration-[300ms] ease-[cubic-bezier(0.4,0,0.2,1)]"
+          style={{
+            left: indicator.left,
+            width: indicator.width,
+            top: indicator.top,
+          }}
+        />
+      )}
     </div>
   )
 }
 
 function LogsPage() {
-  const { category, sort } = Route.useSearch()
+  const { category: rawCategory, sort } = Route.useSearch()
+  const category = rawCategory ?? 'all'
   const navigate = useNavigate()
 
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ['posts', category, sort],
-    queryFn: () => fetchPosts(category, sort),
+  const { data: categories = [{ category_id: 0, name: 'All' }] } = useQuery<
+    Category[]
+  >({
+    queryKey: ['categories'],
+    queryFn: fetchCategories,
+    staleTime: 5 * 60_000,
   })
 
-  function handleCategoryClick(cat: string) {
-    navigate({ to: '/logs', search: () => ({ category: cat, sort }) })
-  }
+  const selectedCategoryId = categories.find(
+    (c) => c.name.toLowerCase() === category,
+  )?.category_id
+
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ['posts', category, sort, selectedCategoryId],
+    queryFn: () => fetchPosts(category, sort, selectedCategoryId),
+  })
 
   function handleSortClick(s: string) {
     navigate({ to: '/logs', search: () => ({ category, sort: s }) })
@@ -199,7 +216,10 @@ function LogsPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-(--color-bg)">
-      <div className="max-w-[1320px] mx-auto w-full px-4 sm:px-8 lg:px-14 pt-8 lg:pt-10 pb-6 lg:pb-7 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-5 lg:gap-10">
+      <div
+        className="row-enter max-w-[1320px] mx-auto w-full px-4 sm:px-8 lg:px-14 pt-8 lg:pt-10 pb-6 lg:pb-7 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-5 lg:gap-10"
+        style={{ animationDelay: '0ms' }}
+      >
         <div>
           <div className="label mb-3">THE ROAD</div>
           <h1 className="font-display text-[40px] sm:text-[56px] lg:text-[64px] font-medium tracking-tight leading-none m-0 text-(--color-text-primary)">
@@ -217,7 +237,10 @@ function LogsPage() {
         </div>
       </div>
 
-      <div className="border-t border-b border-(--color-border) bg-(--color-bg)">
+      <div
+        className="row-enter border-t border-b border-(--color-border) bg-(--color-bg)"
+        style={{ animationDelay: '60ms' }}
+      >
         <div className="max-w-[1320px] mx-auto px-4 sm:px-8 lg:px-14 py-[18px] flex flex-col gap-4">
           <div className="flex items-center gap-4 sm:gap-6">
             <div className="flex-1 sm:flex-[0_0_360px] flex items-center gap-[10px] px-3.5 py-[9px] bg-(--color-surface-raised) border border-(--color-border) rounded-[var(--radius-sm)]">
@@ -249,8 +272,11 @@ function LogsPage() {
           </div>
 
           <CategoryPills
+            categories={categories}
             category={category}
-            onCategoryClick={handleCategoryClick}
+            onAllClick={() =>
+              navigate({ to: '/logs', search: () => ({ sort }) })
+            }
           />
         </div>
       </div>
@@ -276,13 +302,19 @@ function LogsPage() {
               title={post.title}
               excerpt={getExcerpt(post.content)}
               category={post.categories?.[0]?.name ?? ''}
+              daysIn={Math.floor(
+                (Date.now() - new Date(post.created_at).getTime()) / 86_400_000,
+              )}
               isStuck={post.stuck}
             />
           </div>
         ))}
       </main>
 
-      <footer className="max-w-[1320px] mx-auto w-full px-14 pt-9 pb-14 flex items-center justify-between">
+      <footer
+        className="row-enter max-w-[1320px] mx-auto w-full px-14 pt-9 pb-14 flex items-center justify-between"
+        style={{ animationDelay: '120ms' }}
+      >
         <div className="flex items-center gap-3.5">
           <span
             aria-hidden
@@ -294,7 +326,7 @@ function LogsPage() {
         </div>
         <Link
           to="/logs"
-          search={{ category: 'all' }}
+          search={{ sort: 'recent' }}
           className="font-body text-[13px] text-(--color-text-primary) no-underline border-b border-(--color-text-primary) pb-0.5"
         >
           Older logs →

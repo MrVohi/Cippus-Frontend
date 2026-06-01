@@ -11,10 +11,16 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as LogsIndexRouteImport } from './routes/logs/index'
+import { Route as LogsNewRouteImport } from './routes/logs/new'
+import { Route as LogsIdRouteImport } from './routes/logs/$id'
+import { Route as CategoryIdRouteImport } from './routes/category/$id'
 import { Route as AuthSetupRouteImport } from './routes/auth/setup'
 import { Route as AuthRegisterRouteImport } from './routes/auth/register'
 import { Route as AuthPasswordResetRouteImport } from './routes/auth/password-reset'
 import { Route as AuthLoginRouteImport } from './routes/auth/login'
+import { Route as LogsIdIndexRouteImport } from './routes/logs/$id/index'
+import { Route as LogsIdEditRouteImport } from './routes/logs/$id/edit'
 
 const OnboardingRoute = OnboardingRouteImport.update({
   id: '/onboarding',
@@ -24,6 +30,26 @@ const OnboardingRoute = OnboardingRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LogsIndexRoute = LogsIndexRouteImport.update({
+  id: '/logs/',
+  path: '/logs/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LogsNewRoute = LogsNewRouteImport.update({
+  id: '/logs/new',
+  path: '/logs/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LogsIdRoute = LogsIdRouteImport.update({
+  id: '/logs/$id',
+  path: '/logs/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CategoryIdRoute = CategoryIdRouteImport.update({
+  id: '/category/$id',
+  path: '/category/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthSetupRoute = AuthSetupRouteImport.update({
@@ -46,6 +72,16 @@ const AuthLoginRoute = AuthLoginRouteImport.update({
   path: '/auth/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LogsIdIndexRoute = LogsIdIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => LogsIdRoute,
+} as any)
+const LogsIdEditRoute = LogsIdEditRouteImport.update({
+  id: '/edit',
+  path: '/edit',
+  getParentRoute: () => LogsIdRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -54,6 +90,12 @@ export interface FileRoutesByFullPath {
   '/auth/password-reset': typeof AuthPasswordResetRoute
   '/auth/register': typeof AuthRegisterRoute
   '/auth/setup': typeof AuthSetupRoute
+  '/category/$id': typeof CategoryIdRoute
+  '/logs/$id': typeof LogsIdRouteWithChildren
+  '/logs/new': typeof LogsNewRoute
+  '/logs/': typeof LogsIndexRoute
+  '/logs/$id/edit': typeof LogsIdEditRoute
+  '/logs/$id/': typeof LogsIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -62,6 +104,11 @@ export interface FileRoutesByTo {
   '/auth/password-reset': typeof AuthPasswordResetRoute
   '/auth/register': typeof AuthRegisterRoute
   '/auth/setup': typeof AuthSetupRoute
+  '/category/$id': typeof CategoryIdRoute
+  '/logs/new': typeof LogsNewRoute
+  '/logs': typeof LogsIndexRoute
+  '/logs/$id/edit': typeof LogsIdEditRoute
+  '/logs/$id': typeof LogsIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -71,6 +118,12 @@ export interface FileRoutesById {
   '/auth/password-reset': typeof AuthPasswordResetRoute
   '/auth/register': typeof AuthRegisterRoute
   '/auth/setup': typeof AuthSetupRoute
+  '/category/$id': typeof CategoryIdRoute
+  '/logs/$id': typeof LogsIdRouteWithChildren
+  '/logs/new': typeof LogsNewRoute
+  '/logs/': typeof LogsIndexRoute
+  '/logs/$id/edit': typeof LogsIdEditRoute
+  '/logs/$id/': typeof LogsIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -81,6 +134,12 @@ export interface FileRouteTypes {
     | '/auth/password-reset'
     | '/auth/register'
     | '/auth/setup'
+    | '/category/$id'
+    | '/logs/$id'
+    | '/logs/new'
+    | '/logs/'
+    | '/logs/$id/edit'
+    | '/logs/$id/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -89,6 +148,11 @@ export interface FileRouteTypes {
     | '/auth/password-reset'
     | '/auth/register'
     | '/auth/setup'
+    | '/category/$id'
+    | '/logs/new'
+    | '/logs'
+    | '/logs/$id/edit'
+    | '/logs/$id'
   id:
     | '__root__'
     | '/'
@@ -97,6 +161,12 @@ export interface FileRouteTypes {
     | '/auth/password-reset'
     | '/auth/register'
     | '/auth/setup'
+    | '/category/$id'
+    | '/logs/$id'
+    | '/logs/new'
+    | '/logs/'
+    | '/logs/$id/edit'
+    | '/logs/$id/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -106,6 +176,10 @@ export interface RootRouteChildren {
   AuthPasswordResetRoute: typeof AuthPasswordResetRoute
   AuthRegisterRoute: typeof AuthRegisterRoute
   AuthSetupRoute: typeof AuthSetupRoute
+  CategoryIdRoute: typeof CategoryIdRoute
+  LogsIdRoute: typeof LogsIdRouteWithChildren
+  LogsNewRoute: typeof LogsNewRoute
+  LogsIndexRoute: typeof LogsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -122,6 +196,34 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/logs/': {
+      id: '/logs/'
+      path: '/logs'
+      fullPath: '/logs/'
+      preLoaderRoute: typeof LogsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/logs/new': {
+      id: '/logs/new'
+      path: '/logs/new'
+      fullPath: '/logs/new'
+      preLoaderRoute: typeof LogsNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/logs/$id': {
+      id: '/logs/$id'
+      path: '/logs/$id'
+      fullPath: '/logs/$id'
+      preLoaderRoute: typeof LogsIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/category/$id': {
+      id: '/category/$id'
+      path: '/category/$id'
+      fullPath: '/category/$id'
+      preLoaderRoute: typeof CategoryIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth/setup': {
@@ -152,8 +254,35 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/logs/$id/': {
+      id: '/logs/$id/'
+      path: '/'
+      fullPath: '/logs/$id/'
+      preLoaderRoute: typeof LogsIdIndexRouteImport
+      parentRoute: typeof LogsIdRoute
+    }
+    '/logs/$id/edit': {
+      id: '/logs/$id/edit'
+      path: '/edit'
+      fullPath: '/logs/$id/edit'
+      preLoaderRoute: typeof LogsIdEditRouteImport
+      parentRoute: typeof LogsIdRoute
+    }
   }
 }
+
+interface LogsIdRouteChildren {
+  LogsIdEditRoute: typeof LogsIdEditRoute
+  LogsIdIndexRoute: typeof LogsIdIndexRoute
+}
+
+const LogsIdRouteChildren: LogsIdRouteChildren = {
+  LogsIdEditRoute: LogsIdEditRoute,
+  LogsIdIndexRoute: LogsIdIndexRoute,
+}
+
+const LogsIdRouteWithChildren =
+  LogsIdRoute._addFileChildren(LogsIdRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -162,6 +291,10 @@ const rootRouteChildren: RootRouteChildren = {
   AuthPasswordResetRoute: AuthPasswordResetRoute,
   AuthRegisterRoute: AuthRegisterRoute,
   AuthSetupRoute: AuthSetupRoute,
+  CategoryIdRoute: CategoryIdRoute,
+  LogsIdRoute: LogsIdRouteWithChildren,
+  LogsNewRoute: LogsNewRoute,
+  LogsIndexRoute: LogsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
