@@ -18,6 +18,7 @@ export async function fetchWithAuth(url: string, options: RequestInit) {
 
   const refreshResponse = await fetch(BASE_URL + '/api/v1/auth/refresh', {
     method: 'POST',
+    credentials: 'include',
   })
 
   if (!refreshResponse.ok) {
