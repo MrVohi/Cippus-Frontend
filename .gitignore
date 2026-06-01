@@ -1,4 +1,5 @@
 node_modules/
 .tanstack/
-.env
+.env*
+!.env.example
 dist/
