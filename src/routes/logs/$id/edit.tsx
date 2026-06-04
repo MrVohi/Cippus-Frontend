@@ -53,33 +53,33 @@ const TOOLBAR_BUTTONS = [
     title: 'Bold',
     style: { fontWeight: 600 },
     action: (e: ReturnType<typeof useEditor>) =>
-      e?.chain().focus().toggleBold().run(),
-    isActive: (e: ReturnType<typeof useEditor>) => !!e?.isActive('bold'),
+      e.chain().focus().toggleBold().run(),
+    isActive: (e: ReturnType<typeof useEditor>) => e.isActive('bold'),
   },
   {
     label: 'I',
     title: 'Italic',
     style: { fontStyle: 'italic' as const },
     action: (e: ReturnType<typeof useEditor>) =>
-      e?.chain().focus().toggleItalic().run(),
-    isActive: (e: ReturnType<typeof useEditor>) => !!e?.isActive('italic'),
+      e.chain().focus().toggleItalic().run(),
+    isActive: (e: ReturnType<typeof useEditor>) => e.isActive('italic'),
   },
   {
     label: 'H2',
     title: 'Heading',
     style: { fontWeight: 500 },
     action: (e: ReturnType<typeof useEditor>) =>
-      e?.chain().focus().toggleHeading({ level: 2 }).run(),
+      e.chain().focus().toggleHeading({ level: 2 }).run(),
     isActive: (e: ReturnType<typeof useEditor>) =>
-      !!e?.isActive('heading', { level: 2 }),
+      e.isActive('heading', { level: 2 }),
   },
   {
     label: '≡',
     title: 'List',
     style: {},
     action: (e: ReturnType<typeof useEditor>) =>
-      e?.chain().focus().toggleBulletList().run(),
-    isActive: (e: ReturnType<typeof useEditor>) => !!e?.isActive('bulletList'),
+      e.chain().focus().toggleBulletList().run(),
+    isActive: (e: ReturnType<typeof useEditor>) => e.isActive('bulletList'),
   },
 ] as const
 
@@ -141,8 +141,8 @@ function RouteComponent() {
   const editor = useEditor({
     editable: true,
     extensions: [StarterKit],
-    onUpdate: ({ editor }) => {
-      form.setValue('content', JSON.stringify(editor.getJSON()), {
+    onUpdate: ({ editor: ed }) => {
+      form.setValue('content', JSON.stringify(ed.getJSON()), {
         shouldValidate: true,
       })
     },
@@ -161,7 +161,7 @@ function RouteComponent() {
   }, [post])
 
   useEffect(() => {
-    if (!editor || !post || editorInitialized.current) return
+    if (!post || editorInitialized.current) return
     editor.commands.setContent(JSON.parse(post.content))
     editorInitialized.current = true
   }, [editor, post])
@@ -189,18 +189,18 @@ function RouteComponent() {
   }, [form])
 
   const toggleCategory = useCallback(
-    (id: number) => {
+    (catId: number) => {
       const current = form.getValues('categoryIds')
-      const next = current.includes(id)
-        ? current.filter((c) => c !== id)
-        : [...current, id]
+      const next = current.includes(catId)
+        ? current.filter((c) => c !== catId)
+        : [...current, catId]
       form.setValue('categoryIds', next, { shouldValidate: true })
     },
     [form],
   )
 
   const handleAiImprove = useCallback(async () => {
-    const text = editor?.getText() ?? ''
+    const text = editor.getText()
     if (!text.trim()) return
     setAiLoading(true)
     setAiSuggestion(null)
@@ -211,8 +211,8 @@ function RouteComponent() {
         body: JSON.stringify({ text }),
       })
       if (!res.ok) throw new Error()
-      const data = await res.json()
-      setAiSuggestion(data.improved ?? data.text ?? '')
+      const json = await res.json()
+      setAiSuggestion(json.improved ?? json.text ?? '')
     } catch {
       setAiSuggestion(null)
     } finally {
@@ -221,7 +221,7 @@ function RouteComponent() {
   }, [editor])
 
   const applyAiSuggestion = useCallback(() => {
-    if (!aiSuggestion || !editor) return
+    if (!aiSuggestion) return
     editor.commands.setContent(aiSuggestion)
     form.setValue('content', aiSuggestion, { shouldValidate: true })
     setAiSuggestion(null)
@@ -232,7 +232,9 @@ function RouteComponent() {
     const fd = new FormData()
     fd.append('title', values.title)
     fd.append('content', values.content)
-    values.categoryIds.forEach((id) => fd.append('category_ids', String(id)))
+    values.categoryIds.forEach((catId) =>
+      fd.append('category_ids', String(catId)),
+    )
     if (values.imageFile) fd.append('image', values.imageFile)
     if (imageRemoved) fd.append('remove_image', 'true')
 
@@ -246,17 +248,17 @@ function RouteComponent() {
         setSubmitError(err.error ?? 'Something went wrong.')
         return
       }
-      const data = await res.json()
+      const json = await res.json()
       navigate({
-        to: '/logs/$id/',
-        params: { id: String(data.post?.post_id ?? data.id) },
+        to: '/logs/$id',
+        params: { id: String(json.post?.post_id ?? json.id) },
       })
     } catch {
       setSubmitError('Could not reach the server. Try again.')
     }
   }
 
-  const previewText = editor?.getText().slice(0, 180) ?? ''
+  const previewText = editor.getText().slice(0, 180)
   const selectedCategoryNames = categories
     .filter((c) => watchedCategoryIds.includes(c.category_id))
     .map((c) => c.name)
@@ -282,7 +284,7 @@ function RouteComponent() {
   }
 
   if (user?.id !== post.author_id) {
-    navigate({ to: '/logs/$id/', params: { id } })
+    navigate({ to: '/logs/$id', params: { id } })
     return null
   }
 
@@ -295,7 +297,7 @@ function RouteComponent() {
         style={{ animationDelay: '0ms' }}
       >
         <Link
-          to="/logs/$id/"
+          to="/logs/$id"
           params={{ id }}
           className="inline-flex items-center gap-2 font-body text-[12px] tracking-[0.16em] uppercase text-(--color-text-muted) no-underline mb-6 hover:text-(--color-text-primary) transition-colors duration-[180ms]"
         >
@@ -364,7 +366,7 @@ function RouteComponent() {
 
               <div
                 className="prose-cippus min-h-[280px] px-4 py-3 cursor-text"
-                onClick={() => editor?.commands.focus()}
+                onClick={() => editor.commands.focus()}
               >
                 <EditorContent editor={editor} />
               </div>
@@ -622,7 +624,7 @@ function RouteComponent() {
             </button>
 
             <Link
-              to="/logs/$id/"
+              to="/logs/$id"
               params={{ id }}
               className="font-body text-[13px] text-center text-(--color-text-muted) no-underline hover:text-(--color-text-primary) transition-colors duration-[180ms]"
             >

@@ -234,7 +234,7 @@ function NotificationPanel({ onClose }: { onClose: () => void }) {
           <div style={{ flex: 1, overflowY: 'auto' }}>
             {notifications.map((n, i) => (
               <div
-                key={n.ID ?? i}
+                key={n.ID}
                 className="row-enter"
                 style={{
                   animationDelay: `${i * 30}ms`,
