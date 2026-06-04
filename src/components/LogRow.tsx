@@ -29,7 +29,7 @@ export function LogRow({
 }: LogRowProps) {
   return (
     <Link
-      to="/logs/$id/"
+      to="/logs/$id"
       params={{ id: String(id) }}
       className="relative block px-4 sm:px-8 lg:px-14 py-[26px] bg-(--color-bg) border-b border-(--color-border) no-underline group"
       aria-label={`Open ${title}`}
