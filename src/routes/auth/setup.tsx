@@ -279,8 +279,10 @@ function RouteComponent() {
   const [bio, setBio] = useState(useAuthStore.getState().user?.bio ?? '')
   const [notifReplies, setNotifReplies] = useState(true)
   const [notifFollows, setNotifFollows] = useState(true)
-  const [notifWeekly, setNotifWeekly] = useState(false)
-  const [notifNews, setNotifNews] = useState(false)
+  const [notifLikes, setNotifLikes] = useState(true)
+  const [notifMentions, setNotifMentions] = useState(true)
+  const [notifDMs, setNotifDMs] = useState(true)
+  const [notifPostApproved, setNotifPostApproved] = useState(false)
 
   function goBack() {
     setDir('back')
@@ -304,6 +306,30 @@ function RouteComponent() {
             Authorization: 'Bearer ' + useAuthStore.getState().token,
           },
           body: JSON.stringify({ username, bio }),
+          credentials: 'include',
+        },
+      )
+      if (!res.ok) {
+        setError('Could not save settings. Please try again.')
+        return
+      }
+    } else if (step == 2) {
+      const res = await fetch(
+        import.meta.env.VITE_API_URL + '/api/v1/users/me',
+        {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + useAuthStore.getState().token,
+          },
+          body: JSON.stringify({
+            notif_replies: notifReplies,
+            notif_follows: notifFollows,
+            notif_likes: notifLikes,
+            notif_mentions: notifMentions,
+            notif_dms: notifDMs,
+            notif_post_approved: notifPostApproved,
+          }),
           credentials: 'include',
         },
       )
@@ -633,16 +659,28 @@ function RouteComponent() {
                   onToggle={() => setNotifFollows((v) => !v)}
                 />
                 <ToggleRow
-                  title="Weekly road"
-                  body="Sunday digest of what's moved on the builds you're watching."
-                  on={notifWeekly}
-                  onToggle={() => setNotifWeekly((v) => !v)}
+                  title="Likes on your logs and comments"
+                  body="When another builder liked what you posted."
+                  on={notifLikes}
+                  onToggle={() => setNotifLikes((v) => !v)}
                 />
                 <ToggleRow
-                  title="Workshop news"
-                  body="Rare. Only when something about Cippus itself changes."
-                  on={notifNews}
-                  onToggle={() => setNotifNews((v) => !v)}
+                  title="Mentionned somewhere"
+                  body="When another builder tags you."
+                  on={notifMentions}
+                  onToggle={() => setNotifMentions((v) => !v)}
+                />
+                <ToggleRow
+                  title="Received a private message"
+                  body="When another builder wants to talk with you."
+                  on={notifDMs}
+                  onToggle={() => setNotifDMs((v) => !v)}
+                />
+                <ToggleRow
+                  title="Your log is published"
+                  body="When your log is now available for everyone."
+                  on={notifPostApproved}
+                  onToggle={() => setNotifPostApproved((v) => !v)}
                 />
               </div>
             )}
