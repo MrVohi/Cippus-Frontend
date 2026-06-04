@@ -15,6 +15,7 @@ import { Route as LogsIndexRouteImport } from './routes/logs/index'
 import { Route as LogsNewRouteImport } from './routes/logs/new'
 import { Route as LogsIdRouteImport } from './routes/logs/$id'
 import { Route as CategoryIdRouteImport } from './routes/category/$id'
+import { Route as AuthSuccessRouteImport } from './routes/auth/success'
 import { Route as AuthSetupRouteImport } from './routes/auth/setup'
 import { Route as AuthRegisterRouteImport } from './routes/auth/register'
 import { Route as AuthPasswordResetRouteImport } from './routes/auth/password-reset'
@@ -50,6 +51,11 @@ const LogsIdRoute = LogsIdRouteImport.update({
 const CategoryIdRoute = CategoryIdRouteImport.update({
   id: '/category/$id',
   path: '/category/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthSuccessRoute = AuthSuccessRouteImport.update({
+  id: '/auth/success',
+  path: '/auth/success',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthSetupRoute = AuthSetupRouteImport.update({
@@ -90,6 +96,7 @@ export interface FileRoutesByFullPath {
   '/auth/password-reset': typeof AuthPasswordResetRoute
   '/auth/register': typeof AuthRegisterRoute
   '/auth/setup': typeof AuthSetupRoute
+  '/auth/success': typeof AuthSuccessRoute
   '/category/$id': typeof CategoryIdRoute
   '/logs/$id': typeof LogsIdRouteWithChildren
   '/logs/new': typeof LogsNewRoute
@@ -104,6 +111,7 @@ export interface FileRoutesByTo {
   '/auth/password-reset': typeof AuthPasswordResetRoute
   '/auth/register': typeof AuthRegisterRoute
   '/auth/setup': typeof AuthSetupRoute
+  '/auth/success': typeof AuthSuccessRoute
   '/category/$id': typeof CategoryIdRoute
   '/logs/new': typeof LogsNewRoute
   '/logs': typeof LogsIndexRoute
@@ -118,6 +126,7 @@ export interface FileRoutesById {
   '/auth/password-reset': typeof AuthPasswordResetRoute
   '/auth/register': typeof AuthRegisterRoute
   '/auth/setup': typeof AuthSetupRoute
+  '/auth/success': typeof AuthSuccessRoute
   '/category/$id': typeof CategoryIdRoute
   '/logs/$id': typeof LogsIdRouteWithChildren
   '/logs/new': typeof LogsNewRoute
@@ -134,6 +143,7 @@ export interface FileRouteTypes {
     | '/auth/password-reset'
     | '/auth/register'
     | '/auth/setup'
+    | '/auth/success'
     | '/category/$id'
     | '/logs/$id'
     | '/logs/new'
@@ -148,6 +158,7 @@ export interface FileRouteTypes {
     | '/auth/password-reset'
     | '/auth/register'
     | '/auth/setup'
+    | '/auth/success'
     | '/category/$id'
     | '/logs/new'
     | '/logs'
@@ -161,6 +172,7 @@ export interface FileRouteTypes {
     | '/auth/password-reset'
     | '/auth/register'
     | '/auth/setup'
+    | '/auth/success'
     | '/category/$id'
     | '/logs/$id'
     | '/logs/new'
@@ -176,6 +188,7 @@ export interface RootRouteChildren {
   AuthPasswordResetRoute: typeof AuthPasswordResetRoute
   AuthRegisterRoute: typeof AuthRegisterRoute
   AuthSetupRoute: typeof AuthSetupRoute
+  AuthSuccessRoute: typeof AuthSuccessRoute
   CategoryIdRoute: typeof CategoryIdRoute
   LogsIdRoute: typeof LogsIdRouteWithChildren
   LogsNewRoute: typeof LogsNewRoute
@@ -224,6 +237,13 @@ declare module '@tanstack/react-router' {
       path: '/category/$id'
       fullPath: '/category/$id'
       preLoaderRoute: typeof CategoryIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/success': {
+      id: '/auth/success'
+      path: '/auth/success'
+      fullPath: '/auth/success'
+      preLoaderRoute: typeof AuthSuccessRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth/setup': {
@@ -291,6 +311,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthPasswordResetRoute: AuthPasswordResetRoute,
   AuthRegisterRoute: AuthRegisterRoute,
   AuthSetupRoute: AuthSetupRoute,
+  AuthSuccessRoute: AuthSuccessRoute,
   CategoryIdRoute: CategoryIdRoute,
   LogsIdRoute: LogsIdRouteWithChildren,
   LogsNewRoute: LogsNewRoute,

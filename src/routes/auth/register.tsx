@@ -414,6 +414,27 @@ function RegisterPage() {
             </p>
           </form>
 
+           <button
+            type="button"
+            onClick={() => window.location.href = import.meta.env.VITE_API_URL + '/api/v1/auth/google/login'}
+            style={{
+              fontFamily: 'var(--font-body)',
+              fontSize: 15,
+              letterSpacing: '0.04em',
+              fontWeight: 500,
+              padding: '14px 18px',
+              background: 'transparent',
+              color: 'var(--color-text-primary)',
+              border: '1px solid var(--color-border)',
+              borderRadius: 'var(--radius-sm)',
+              cursor: 'pointer',
+              width: '100%',
+              marginTop: 12,
+            }}
+          >
+            Continue with Google
+          </button>
+
           <div
             style={{
               marginTop: 'clamp(12px, 1.8vh, 40px)',
