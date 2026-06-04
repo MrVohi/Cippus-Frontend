@@ -180,6 +180,7 @@ function LoginPage() {
                 </Label>
                 <Link
                   to="/auth/password-reset"
+                  search={{ token: undefined }}
                   style={{
                     fontSize: 12,
                     color: 'var(--color-text-muted)',

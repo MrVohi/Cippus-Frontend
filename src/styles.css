@@ -32,6 +32,8 @@
      SEMANTIC TOKENS â€” Light mode
   ---------------------------------------------------------- */
 
+  --navbar-height: 40px;
+
   --color-bg: var(--pale-stone);
   --color-surface: var(--pale-stone);
   --color-surface-raised: #ffffff;

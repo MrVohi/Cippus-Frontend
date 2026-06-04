@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as MessagesIndexRouteImport } from './routes/messages/index'
 import { Route as LogsIndexRouteImport } from './routes/logs/index'
 import { Route as LogsNewRouteImport } from './routes/logs/new'
 import { Route as LogsIdRouteImport } from './routes/logs/$id'
@@ -30,6 +31,11 @@ const OnboardingRoute = OnboardingRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MessagesIndexRoute = MessagesIndexRouteImport.update({
+  id: '/messages/',
+  path: '/messages/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LogsIndexRoute = LogsIndexRouteImport.update({
@@ -94,6 +100,7 @@ export interface FileRoutesByFullPath {
   '/logs/$id': typeof LogsIdRouteWithChildren
   '/logs/new': typeof LogsNewRoute
   '/logs/': typeof LogsIndexRoute
+  '/messages/': typeof MessagesIndexRoute
   '/logs/$id/edit': typeof LogsIdEditRoute
   '/logs/$id/': typeof LogsIdIndexRoute
 }
@@ -107,6 +114,7 @@ export interface FileRoutesByTo {
   '/category/$id': typeof CategoryIdRoute
   '/logs/new': typeof LogsNewRoute
   '/logs': typeof LogsIndexRoute
+  '/messages': typeof MessagesIndexRoute
   '/logs/$id/edit': typeof LogsIdEditRoute
   '/logs/$id': typeof LogsIdIndexRoute
 }
@@ -122,6 +130,7 @@ export interface FileRoutesById {
   '/logs/$id': typeof LogsIdRouteWithChildren
   '/logs/new': typeof LogsNewRoute
   '/logs/': typeof LogsIndexRoute
+  '/messages/': typeof MessagesIndexRoute
   '/logs/$id/edit': typeof LogsIdEditRoute
   '/logs/$id/': typeof LogsIdIndexRoute
 }
@@ -138,6 +147,7 @@ export interface FileRouteTypes {
     | '/logs/$id'
     | '/logs/new'
     | '/logs/'
+    | '/messages/'
     | '/logs/$id/edit'
     | '/logs/$id/'
   fileRoutesByTo: FileRoutesByTo
@@ -151,6 +161,7 @@ export interface FileRouteTypes {
     | '/category/$id'
     | '/logs/new'
     | '/logs'
+    | '/messages'
     | '/logs/$id/edit'
     | '/logs/$id'
   id:
@@ -165,6 +176,7 @@ export interface FileRouteTypes {
     | '/logs/$id'
     | '/logs/new'
     | '/logs/'
+    | '/messages/'
     | '/logs/$id/edit'
     | '/logs/$id/'
   fileRoutesById: FileRoutesById
@@ -180,6 +192,7 @@ export interface RootRouteChildren {
   LogsIdRoute: typeof LogsIdRouteWithChildren
   LogsNewRoute: typeof LogsNewRoute
   LogsIndexRoute: typeof LogsIndexRoute
+  MessagesIndexRoute: typeof MessagesIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -196,6 +209,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/messages/': {
+      id: '/messages/'
+      path: '/messages'
+      fullPath: '/messages/'
+      preLoaderRoute: typeof MessagesIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/logs/': {
@@ -295,6 +315,7 @@ const rootRouteChildren: RootRouteChildren = {
   LogsIdRoute: LogsIdRouteWithChildren,
   LogsNewRoute: LogsNewRoute,
   LogsIndexRoute: LogsIndexRoute,
+  MessagesIndexRoute: MessagesIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
