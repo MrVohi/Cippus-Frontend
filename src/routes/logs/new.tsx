@@ -1,4 +1,9 @@
-import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
+import {
+  createFileRoute,
+  Link,
+  redirect,
+  useNavigate,
+} from '@tanstack/react-router'
 import StarterKit from '@tiptap/starter-kit'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -7,8 +12,15 @@ import { useEditor, EditorContent } from '@tiptap/react'
 import { useQuery } from '@tanstack/react-query'
 import { useState, useRef, useCallback } from 'react'
 import { fetchWithAuth } from '#/lib/api'
+import { useAuthStore } from '#/stores/useAuthStore'
 
 export const Route = createFileRoute('/logs/new')({
+  beforeLoad: () => {
+    const user = useAuthStore.getState().user
+    if (user == null) {
+      throw redirect({ to: '/auth/login' })
+    }
+  },
   component: RouteComponent,
 })
 

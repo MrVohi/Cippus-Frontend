@@ -42,8 +42,7 @@ function safeExcerpt(raw: string): string {
 }
 
 async function fetchPreviewLogs(): Promise<LogEntry[]> {
-  const url =
-    import.meta.env.VITE_API_URL + '/api/v1/logs/?limit=15&sort=recent'
+  const url = import.meta.env.VITE_API_URL + '/api/v1/logs?limit=15&sort=recent'
   const res = await fetch(url)
   if (!res.ok) throw new Error()
   const data = await res.json()
