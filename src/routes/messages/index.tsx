@@ -1,10 +1,16 @@
 import { useEffect, useRef, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, redirect } from '@tanstack/react-router'
 import { fetchWithAuth } from '#/lib/api'
 import { useAuthStore } from '#/stores/useAuthStore'
 
 export const Route = createFileRoute('/messages/')({
+  beforeLoad: () => {
+    const user = useAuthStore.getState().user
+    if (user == null) {
+      throw redirect({ to: '/auth/login' })
+    }
+  },
   component: MessagesPage,
 })
 

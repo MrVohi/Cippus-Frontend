@@ -1,11 +1,17 @@
 ﻿import { useAuthStore } from '#/stores/useAuthStore'
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
 import { CippusMark } from '#/components/CippusMark'
 import { PrivacyContent } from '#/content/privacy'
 import { TermsContent } from '#/content/terms'
 
 export const Route = createFileRoute('/auth/setup')({
+  beforeLoad: () => {
+    const user = useAuthStore.getState().user
+    if (user == null) {
+      throw redirect({ to: '/auth/login' })
+    }
+  },
   component: RouteComponent,
 })
 
