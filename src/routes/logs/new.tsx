@@ -41,33 +41,33 @@ const TOOLBAR_BUTTONS = [
     title: 'Bold',
     style: { fontWeight: 600 },
     action: (e: ReturnType<typeof useEditor>) =>
-      e?.chain().focus().toggleBold().run(),
-    isActive: (e: ReturnType<typeof useEditor>) => !!e?.isActive('bold'),
+      e.chain().focus().toggleBold().run(),
+    isActive: (e: ReturnType<typeof useEditor>) => e.isActive('bold'),
   },
   {
     label: 'I',
     title: 'Italic',
     style: { fontStyle: 'italic' as const },
     action: (e: ReturnType<typeof useEditor>) =>
-      e?.chain().focus().toggleItalic().run(),
-    isActive: (e: ReturnType<typeof useEditor>) => !!e?.isActive('italic'),
+      e.chain().focus().toggleItalic().run(),
+    isActive: (e: ReturnType<typeof useEditor>) => e.isActive('italic'),
   },
   {
     label: 'H2',
     title: 'Heading',
     style: { fontWeight: 500 },
     action: (e: ReturnType<typeof useEditor>) =>
-      e?.chain().focus().toggleHeading({ level: 2 }).run(),
+      e.chain().focus().toggleHeading({ level: 2 }).run(),
     isActive: (e: ReturnType<typeof useEditor>) =>
-      !!e?.isActive('heading', { level: 2 }),
+      e.isActive('heading', { level: 2 }),
   },
   {
     label: '≡',
     title: 'List',
     style: {},
     action: (e: ReturnType<typeof useEditor>) =>
-      e?.chain().focus().toggleBulletList().run(),
-    isActive: (e: ReturnType<typeof useEditor>) => !!e?.isActive('bulletList'),
+      e.chain().focus().toggleBulletList().run(),
+    isActive: (e: ReturnType<typeof useEditor>) => e.isActive('bulletList'),
   },
 ] as const
 
@@ -100,8 +100,8 @@ function RouteComponent() {
   const editor = useEditor({
     editable: true,
     extensions: [StarterKit],
-    onUpdate: ({ editor }) => {
-      form.setValue('content', JSON.stringify(editor.getJSON()), {
+    onUpdate: ({ editor: ed }) => {
+      form.setValue('content', JSON.stringify(ed.getJSON()), {
         shouldValidate: true,
       })
     },
@@ -139,7 +139,7 @@ function RouteComponent() {
   )
 
   const handleAiImprove = useCallback(async () => {
-    const text = editor?.getText() ?? ''
+    const text = editor.getText()
     if (!text.trim()) return
     setAiLoading(true)
     setAiSuggestion(null)
@@ -160,7 +160,7 @@ function RouteComponent() {
   }, [editor])
 
   const applyAiSuggestion = useCallback(() => {
-    if (!aiSuggestion || !editor) return
+    if (!aiSuggestion) return
     editor.commands.setContent(aiSuggestion)
     form.setValue('content', aiSuggestion, { shouldValidate: true })
     setAiSuggestion(null)
@@ -186,7 +186,7 @@ function RouteComponent() {
       }
       const data = await res.json()
       navigate({
-        to: '/logs/$id/',
+        to: '/logs/$id',
         params: { id: String(data.post?.post_id ?? data.id) },
       })
     } catch {
@@ -194,7 +194,7 @@ function RouteComponent() {
     }
   }
 
-  const previewText = editor?.getText().slice(0, 180) ?? ''
+  const previewText = editor.getText().slice(0, 180)
   const selectedCategoryNames = categories
     .filter((c) => watchedCategoryIds.includes(c.category_id))
     .map((c) => c.name)
@@ -275,7 +275,7 @@ function RouteComponent() {
 
               <div
                 className="prose-cippus min-h-[280px] px-4 py-3 cursor-text"
-                onClick={() => editor?.commands.focus()}
+                onClick={() => editor.commands.focus()}
               >
                 <EditorContent editor={editor} />
               </div>

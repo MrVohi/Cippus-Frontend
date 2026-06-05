@@ -45,7 +45,7 @@ function LogDetail() {
   })
 
   useEffect(() => {
-    if (!editor || !post?.content) return
+    if (!post?.content) return
     try {
       editor.commands.setContent(JSON.parse(post.content))
     } catch {

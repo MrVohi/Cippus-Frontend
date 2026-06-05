@@ -367,7 +367,7 @@ async function fetchRecentLogs(): Promise<LogEntry[]> {
 }
 
 function LogRow({ log, index }: { log: LogEntry; index: number }) {
-  const category = log.categories?.[0]?.name ?? ''
+  const category = log.categories[0]?.name ?? ''
   const excerpt = safeExcerpt(log.content)
 
   return (
@@ -451,7 +451,7 @@ function LogRow({ log, index }: { log: LogEntry; index: number }) {
             color: 'var(--color-text-muted)',
           }}
         >
-          {log.author?.username}
+          {log.author.username}
         </span>
       </div>
     </div>

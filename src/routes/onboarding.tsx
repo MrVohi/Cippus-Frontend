@@ -53,7 +53,7 @@ async function fetchPreviewLogs(): Promise<LogEntry[]> {
     kind: p.image_url ? 'card' : 'note',
     title: p.title,
     author: p.author,
-    categories: p.categories ?? [],
+    categories: p.categories,
     created_at: p.created_at,
     content: safeExcerpt(p.content),
     image_url: p.image_url,
