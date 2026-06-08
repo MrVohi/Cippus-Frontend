@@ -106,7 +106,7 @@ export function LogDetail() {
     } catch {
       editor.commands.setContent(post.content)
     }
-  }, [editor, post?.content]) // On écoute uniquement la propriété de manière optionnelle
+  }, [editor, post.content]) 
 
   // 2. Les gardes de rendu viennent juste après tous les hooks
   if (isLoading) {
