@@ -97,7 +97,7 @@ export function LogDetail() {
   const [commentContent, setCommentContent] = useState('')
 
   useEffect(() => {
-    if (!editor || !post.content) 
+    if (!editor || !post?.content) 
       return
     try {
       editor.commands.setContent(JSON.parse(post.content))
