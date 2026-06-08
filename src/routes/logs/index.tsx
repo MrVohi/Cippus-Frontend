@@ -95,6 +95,21 @@ export function LogDetail() {
 
   const comments = commentsData?.comments ?? []
   const [commentContent, setCommentContent] = useState('')
+
+  // 1. Le hook reste bien en haut pour React
+  useEffect(() => {
+    // On vérifie UNIQUEMENT l'éditeur et la présence du contenu. 
+    // Le check '!post' provoquait l'erreur TypeScript car géré plus bas.
+    if (!editor || !post?.content) return
+
+    try {
+      editor.commands.setContent(JSON.parse(post.content))
+    } catch {
+      editor.commands.setContent(post.content)
+    }
+  }, [editor, post?.content]) // On écoute uniquement la propriété de manière optionnelle
+
+  // 2. Les gardes de rendu viennent juste après tous les hooks
   if (isLoading) {
     return (
       <div className="min-h-screen bg-(--color-bg) flex items-center justify-center">
@@ -114,16 +129,8 @@ export function LogDetail() {
       </div>
     )
   }
-  useEffect(() => {
-    if (!editor || !post.content) return
 
-    try {
-      editor.commands.setContent(JSON.parse(post.content))
-    } catch {
-      editor.commands.setContent(post.content)
-    }
-  }, [editor, post.content]) // On peut même affiner la dépendance sur post.content directement
-
+  // 3. Le reste de ton code (category, isOwner, return JSX...)
   const category = post.categories?.[0]?.name ?? ''
   const isOwner = user?.id === post.author_id
 
