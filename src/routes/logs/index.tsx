@@ -97,7 +97,7 @@ export function LogDetail() {
   const [commentContent, setCommentContent] = useState('')
 
   useEffect(() => {
-    if (!editor || !post?.content) return
+    if (!editor || !post.content) return
     try {
       editor.commands.setContent(JSON.parse(post.content))
     } catch {
@@ -323,7 +323,7 @@ export function LogDetail() {
                   <div key={comment.ID} className="border-b border-(--color-border) pb-6">
                     <div className="flex justify-between items-center mb-2">
                       <span className="font-body text-[12px] text-(--color-text-muted)">
-                        @{comment.Author?.username}
+                        @{comment.Author.username}
                       </span>
                       <span className="font-body text-[11px] text-(--color-text-placeholder)">
                         {new Date(comment.CreatedAt).toLocaleDateString('en-GB')}
