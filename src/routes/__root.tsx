@@ -520,7 +520,6 @@ function RootDocument({ children }: { children: React.ReactNode }) {
               </Link>
             )}
           </nav>
-        )}
         {children}
         {import.meta.env.DEV && (
           <TanStackDevtools
