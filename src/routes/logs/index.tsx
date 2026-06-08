@@ -99,7 +99,8 @@ export function LogDetail() {
  
   useEffect(() => {
   
-   (!editor || !post.content) return
+   (!editor || !post.content) ; 
+    return
 
     try {
       editor.commands.setContent(JSON.parse(post.content))
