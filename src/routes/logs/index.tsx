@@ -96,11 +96,10 @@ export function LogDetail() {
   const comments = commentsData?.comments ?? []
   const [commentContent, setCommentContent] = useState('')
 
-  // 1. Le hook reste bien en haut pour React
+ 
   useEffect(() => {
-    // On vérifie UNIQUEMENT l'éditeur et la présence du contenu. 
-    // Le check '!post' provoquait l'erreur TypeScript car géré plus bas.
-    if (!editor || !post?.content) return
+  
+    if (!editor || !post.content) return
 
     try {
       editor.commands.setContent(JSON.parse(post.content))
