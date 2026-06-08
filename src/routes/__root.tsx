@@ -424,7 +424,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
     registerPush().catch(() => {})
   }, [user])
 
-  return (
+ return (
     <html lang="en">
       <head>
         <HeadContent />
@@ -447,28 +447,16 @@ function RootDocument({ children }: { children: React.ReactNode }) {
               </div>
             </div>
 
-          {user ? (
-            <div>
-              <span>avatar</span>
-              <Link to="/logs"> · START LOG</Link> // file logs/start-log
-              <Link to="/messages/messages" className="btn-ghost">
-                {' '}
-                · NEW MESSAGE
-              </Link>
-              {(user.role === 'admin' || user.role === 'moderator') && (
-                <span> · ADMIN</span>
-              )}
-            </div>
-          ) : (
-            <Link to="/auth/login" className="btn-ghost">
-              LOG IN
-            </Link>
-          )}
+            {/* UN SEUL BLOC UTILISATEUR PROPRE */}
             {user ? (
-              <div>
+              <div className="flex items-center gap-4">
                 <span>avatar</span>
                 <Link to="/logs/new"> · START LOG</Link>
-                <Link to="/messages"> · NEW MESSAGE</Link>
+                <Link to="/messages" className="btn-ghost">
+                  · NEW MESSAGE
+                </Link>
+                
+                {/* Bouton Cloche de Notification */}
                 <button
                   type="button"
                   onClick={() => {
@@ -506,9 +494,13 @@ function RootDocument({ children }: { children: React.ReactNode }) {
                     />
                   )}
                 </button>
+
+                {/* Panneau de notifications déroulant */}
                 {panelOpen && (
                   <NotificationPanel onClose={() => setPanelOpen(false)} />
                 )}
+
+                {/* Badge d'administration */}
                 {(user?.role === 'admin' || user?.role === 'moderator') && (
                   <span> · ADMIN</span>
                 )}
@@ -519,7 +511,11 @@ function RootDocument({ children }: { children: React.ReactNode }) {
               </Link>
             )}
           </nav>
+        )}
+
         {children}
+
+        {/* Outils de développement TanStack en mode DEV */}
         {import.meta.env.DEV && (
           <TanStackDevtools
             config={{
