@@ -179,7 +179,6 @@ function LoginPage() {
                   PASSWORD
                 </Label>
                
-                  href="/auth/password-reset"
                 <Link
                   to="/auth/password-reset"
                   search={{ token: undefined }}
