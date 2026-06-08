@@ -500,8 +500,8 @@ function RootDocument({ children }: { children: React.ReactNode }) {
                   <NotificationPanel onClose={() => setPanelOpen(false)} />
                 )}
 
-                {/* Badge d'administration */}
-                {(user?.role === 'admin' || user?.role === 'moderator') && (
+              
+                {(user.role === 'admin' || user.role === 'moderator') && (
                   <span> · ADMIN</span>
                 )}
               </div>
