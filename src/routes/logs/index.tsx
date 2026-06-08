@@ -95,18 +95,6 @@ export function LogDetail() {
 
   const comments = commentsData?.comments ?? []
   const [commentContent, setCommentContent] = useState('')
-
-useEffect(() => {
-
-    if (!editor || !post || !post.content) return
-
-    try {
-      editor.commands.setContent(JSON.parse(post.content))
-    } catch {
-      editor.commands.setContent(post.content)
-    }
-  }, [editor, post])
-
   if (isLoading) {
     return (
       <div className="min-h-screen bg-(--color-bg) flex items-center justify-center">
@@ -126,6 +114,15 @@ useEffect(() => {
       </div>
     )
   }
+  useEffect(() => {
+    if (!editor || !post.content) return
+
+    try {
+      editor.commands.setContent(JSON.parse(post.content))
+    } catch {
+      editor.commands.setContent(post.content)
+    }
+  }, [editor, post.content]) // On peut même affiner la dépendance sur post.content directement
 
   const category = post.categories?.[0]?.name ?? ''
   const isOwner = user?.id === post.author_id
