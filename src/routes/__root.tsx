@@ -464,7 +464,6 @@ function RootDocument({ children }: { children: React.ReactNode }) {
               LOG IN
             </Link>
           )}
-        </nav>
             {user ? (
               <div>
                 <span>avatar</span>
