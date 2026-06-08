@@ -99,16 +99,16 @@ export function LogDetail() {
  
   useEffect(() => {
   
-   (!editor || !post.content), return
+  if (!editor || !post?.content) 
+    return
 
     try {
       editor.commands.setContent(JSON.parse(post.content))
     } catch {
       editor.commands.setContent(post.content)
     }
-  }, [editor, post.content]) 
+  }, [editor, post?.content]) 
 
-  // 2. Les gardes de rendu viennent juste après tous les hooks
   if (isLoading) {
     return (
       <div className="min-h-screen bg-(--color-bg) flex items-center justify-center">
@@ -129,7 +129,7 @@ export function LogDetail() {
     )
   }
 
-  // 3. Le reste de ton code (category, isOwner, return JSX...)
+ 
   const category = post.categories?.[0]?.name ?? ''
   const isOwner = user?.id === post.author_id
 
