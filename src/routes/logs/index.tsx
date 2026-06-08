@@ -100,9 +100,9 @@ export function LogDetail() {
     if (!editor || !post?.content) 
       return
     try {
-      editor.commands.setContent(JSON.parse(post.content))
+      editor.commands.setContent(JSON.parse(post?.content))
     } catch {
-      editor.commands.setContent(post.content)
+      editor.commands.setContent(post?.content)
     }
   }, [editor, post])
 
