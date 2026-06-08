@@ -510,7 +510,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
                 {panelOpen && (
                   <NotificationPanel onClose={() => setPanelOpen(false)} />
                 )}
-                {(user.role === 'admin' || user.role === 'moderator') && (
+                {(user?.role === 'admin' || user?.role === 'moderator') && (
                   <span> · ADMIN</span>
                 )}
               </div>
