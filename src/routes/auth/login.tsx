@@ -178,7 +178,7 @@ function LoginPage() {
                 <Label htmlFor="password" className="label">
                   PASSWORD
                 </Label>
-                <a
+               
                   href="/auth/password-reset"
                 <Link
                   to="/auth/password-reset"
@@ -193,7 +193,6 @@ function LoginPage() {
                   }}
                 >
                   Forgot it?
-                </a>
               </div>
               <Input
                 id="password"
