@@ -337,6 +337,7 @@ function RegisterPage() {
                 @{usernameSuggestion}
               </button>
               ?
+              How about <strong>@{usernameSuggestion}</strong>?
             </p>
           )}
 

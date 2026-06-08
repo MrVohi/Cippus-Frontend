@@ -8,11 +8,16 @@ if (!sentryDsn) {
 } else {
   Sentry.init({
     dsn: sentryDsn,
-    // Adds request headers and IP for users, for more info visit:
-    // https://docs.sentry.io/platforms/javascript/guides/tanstackstart-react/configuration/options/#sendDefaultPii
-    sendDefaultPii: true,
-    tracesSampleRate: 1.0,
-    replaysSessionSampleRate: 1.0,
+    sendDefaultPii: false,
+    tracesSampleRate: 0.1,
+    replaysSessionSampleRate: 0.05,
     replaysOnErrorSampleRate: 1.0,
+    beforeSend(event) {
+      if (event.request?.headers) {
+        delete event.request.headers['Authorization']
+        delete event.request.headers['Cookie']
+      }
+      return event
+    },
   })
 }

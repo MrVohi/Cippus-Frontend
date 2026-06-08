@@ -1,10 +1,21 @@
 import { create } from 'zustand'
 
+export type AppNotification = {
+  ID: number
+  RecipientID: number
+  ActorID: number
+  Type: string
+  EntityType: string
+  EntityID: number
+  ReadAt: string | null
+  CreatedAt: string
+}
+
 interface NotificationStore {
-  notifications: unknown[]
+  notifications: AppNotification[]
   unreadCount: number
 
-  setNotifications: (newNotifications: unknown[]) => void
+  setNotifications: (newNotifications: AppNotification[]) => void
   incrementUnread: () => void
   resetUnread: () => void
 }

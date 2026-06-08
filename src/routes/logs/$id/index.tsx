@@ -1,9 +1,8 @@
-
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { EditorContent, useEditor } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useAuthStore } from '#/stores/useAuthStore'
 
 export const Route = createFileRoute('/logs/$id/')({
@@ -15,42 +14,6 @@ async function fetchPost(id: string) {
   const response = await fetch(url)
   if (!response.ok) throw new Error()
   return response.json()
-}
-
-async function fetchLikes(id: string) {
-  const res = await fetch(import.meta.env.VITE_API_URL + '/api/v1/logs/' + id + '/likes')
-  if (!res.ok) throw new Error()
-  return res.json()
-}
-
-async function likePost(id: string, token: string) {
-  const res = await fetch(import.meta.env.VITE_API_URL + '/api/v1/logs/' + id + '/likes', {
-    method: 'POST',
-    headers: { Authorization: 'Bearer ' + token },
-    credentials: 'include',
-  })
-  if (!res.ok) throw new Error()
-  return res.json()
-}
-
-async function fetchComments(id: string) {
-  const res = await fetch(import.meta.env.VITE_API_URL + '/api/v1/logs/' + id + '/comments')
-  if (!res.ok) throw new Error()
-  return res.json()
-}
-
-async function createComment(id: string, content: string, token: string) {
-  const res = await fetch(import.meta.env.VITE_API_URL + '/api/v1/logs/' + id + '/comments', {
-    method: 'POST',
-    headers: { 
-      'Content-Type': 'application/json',
-      Authorization: 'Bearer ' + token 
-    },
-    credentials: 'include',
-    body: JSON.stringify({ content }),
-  })
-  if (!res.ok) throw new Error()
-  return res.json()
 }
 
 function formatDate(iso: string) {
@@ -65,7 +28,7 @@ function daysAgo(iso: string) {
   return Math.floor((Date.now() - new Date(iso).getTime()) / 86_400_000)
 }
 
-export function LogDetail() {
+function LogDetail() {
   const { id } = Route.useParams()
   const user = useAuthStore((s) => s.user)
 
@@ -81,23 +44,8 @@ export function LogDetail() {
     extensions: [StarterKit],
   })
 
-  const { data: likesData, refetch: refetchLikes } = useQuery({
-    queryKey: ['likes', id],
-    queryFn: () => fetchLikes(id),
-  })
-
-  const likesCount = likesData?.likes ?? 0
-
-  const { data: commentsData, refetch: refetchComments } = useQuery({
-    queryKey: ['comments', id],
-    queryFn: () => fetchComments(id),
-  })
-
-  const comments = commentsData?.comments ?? []
-  const [commentContent, setCommentContent] = useState('')
-
   useEffect(() => {
-    if (!editor || !post?.content) return
+    if (!post?.content) return
     try {
       editor.commands.setContent(JSON.parse(post.content))
     } catch {
@@ -209,19 +157,6 @@ export function LogDetail() {
                 </Link>
               </div>
             )}
-            <div className="flex items-end pb-0.5">
-              <button
-                onClick={async () => {
-                  const token = useAuthStore.getState().token
-                  if (!token) return
-                  await likePost(id, token)
-                  refetchLikes()
-                }}
-                className="font-body text-[13px] text-(--color-text-muted) border-b border-(--color-border) pb-px hover:text-(--color-text-primary) transition-colors duration-[180ms] bg-transparent cursor-pointer"
-              >
-                ♥ {likesCount}
-              </button>
-            </div>
           </div>
         </div>
       </section>
@@ -267,75 +202,9 @@ export function LogDetail() {
 
           <div className="mt-14 pt-10 border-t border-(--color-border)">
             <div className="label text-(--color-text-muted) mb-6">REPLIES</div>
-
-            {user && (
-              <div className="mb-8 flex flex-col gap-3">
-                <textarea
-                  value={commentContent}
-                  onChange={(e) => setCommentContent(e.target.value)}
-                  placeholder="Leave a reply..."
-                  rows={3}
-                  style={{
-                    fontFamily: 'var(--font-body)',
-                    fontSize: 14,
-                    color: 'var(--color-text-primary)',
-                    background: 'transparent',
-                    border: '1px solid var(--color-border)',
-                    padding: '10px 12px',
-                    outline: 'none',
-                    resize: 'vertical',
-                    width: '100%',
-                  }}
-                />
-                <button
-                  onClick={async () => {
-                    if (!commentContent.trim()) return
-                    const token = useAuthStore.getState().token
-                    if (!token) return
-                    await createComment(id, commentContent, token)
-                    setCommentContent('')
-                    refetchComments()
-                  }}
-                  style={{
-                    fontFamily: 'var(--font-body)',
-                    fontSize: 13,
-                    fontWeight: 500,
-                    padding: '10px 18px',
-                    background: 'var(--color-accent)',
-                    color: 'var(--color-text-on-accent)',
-                    border: 'none',
-                    cursor: 'pointer',
-                    alignSelf: 'flex-end',
-                  }}
-                >
-                  Reply
-                </button>
-              </div>
-            )}
-
-            <div className="flex flex-col gap-6">
-              {comments.length === 0 ? (
-                <p className="font-body text-[14px] italic text-(--color-text-placeholder)">
-                  No replies yet. Be the first.
-                </p>
-              ) : (
-                comments.map((comment: { ID: number; Author: { username: string }; Content: string; CreatedAt: string }) => (
-                  <div key={comment.ID} className="border-b border-(--color-border) pb-6">
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="font-body text-[12px] text-(--color-text-muted)">
-                        @{comment.Author?.username}
-                      </span>
-                      <span className="font-body text-[11px] text-(--color-text-placeholder)">
-                        {new Date(comment.CreatedAt).toLocaleDateString('en-GB')}
-                      </span>
-                    </div>
-                    <p className="font-body text-[14px] text-(--color-text-secondary) m-0">
-                      {comment.Content}
-                    </p>
-                  </div>
-                ))
-              )}
-            </div>
+            <p className="font-body text-[14px] italic text-(--color-text-placeholder)">
+              Comments are coming in the next update.
+            </p>
           </div>
         </div>
 

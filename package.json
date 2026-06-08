@@ -7,13 +7,13 @@
   },
   "scripts": {
     "dev": "dotenv -e .env -- cross-env NODE_OPTIONS=\"--import ./instrument.server.mjs\" vite dev --port 3000",
-    "build": "vite build && mkdir -p .output/server && cp instrument.server.mjs .output/server",
+    "build": "vite build && cp instrument.server.mjs .output/server",
     "preview": "vite preview",
     "test": "vitest run",
     "lint": "eslint",
     "format": "prettier --check .",
     "check": "prettier --write . && eslint --fix",
-    "start": "node --import ./.output/server/instrument.server.mjs .output/server/index.mjs",
+    "start": "node --import ./dist/server/instrument.server.mjs dist/server/server.js",
     "prepare": "husky"
   },
   "dependencies": {
@@ -30,6 +30,9 @@
     "@tanstack/react-router-ssr-query": "latest",
     "@tanstack/react-start": "^1.131.50",
     "@tanstack/router-plugin": "^1.99.3",
+    "@tiptap/core": "^3.23.6",
+    "@tiptap/react": "^3.23.6",
+    "@tiptap/starter-kit": "^3.23.6",
     "axios": "^1.16.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

@@ -1,11 +1,27 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { CippusMark } from '#/components/CippusMark'
+import { useQuery } from '@tanstack/react-query'
+import { generateText } from '@tiptap/core'
+import StarterKit from '@tiptap/starter-kit'
 
 export const Route = createFileRoute('/onboarding')({
   component: OnboardingPage,
 })
 
+type ApiPost = {
+  post_id: number
+  title: string
+  content: string
+  image_url: string | null
+  created_at: string
+  author: { username: string }
+  categories: { name: string }[]
+  like_count?: number
+  comment_count?: number
+}
+
 type LogEntry = {
+  post_id: number
   kind: 'card' | 'note'
   title: string
   author: { username: string }
@@ -17,188 +33,33 @@ type LogEntry = {
   comment_count: number
 }
 
-// Static data — shape matches future GET /api/v1/posts response.
-// To Swap for useQuery when Logs backend is done.
-const LOGS: LogEntry[] = [
-  {
-    kind: 'card',
-    title: 'Forge bracket — fourth attempt',
-    author: { username: 'Mara K.' },
-    categories: [{ name: 'forge' }],
-    created_at: '14 min ago',
-    content: 'Quench cracked again. Walking outside before I look at it.',
-    image_url: 'artifact',
-    like_count: 12,
-    comment_count: 3,
-  },
-  {
-    kind: 'note',
-    title: 'Cedar canoe — laying strips on the mold',
-    author: { username: 'Diego R.' },
-    categories: [{ name: 'wood' }],
-    created_at: '36 min ago',
-    content:
-      'Mid-strip. Epoxy curing slower than the book said. Letting it be.',
-    image_url: null,
-    like_count: 8,
-    comment_count: 2,
-  },
-  {
-    kind: 'card',
-    title: 'Wheel-throwing — same egg shape, again',
-    author: { username: 'Aiko T.' },
-    categories: [{ name: 'ceramics' }],
-    created_at: '1 hr ago',
-    content: 'The clay finds the same fault every time. Centering, again.',
-    image_url: 'artifact',
-    like_count: 21,
-    comment_count: 7,
-  },
-  {
-    kind: 'card',
-    title: 'Restoring a 1958 Atlas lathe',
-    author: { username: 'Jonas B.' },
-    categories: [{ name: 'restoration' }],
-    created_at: '2 hr ago',
-    content:
-      'Saddle off. Bedways pitted worse than I thought. Stripping the apron next.',
-    image_url: 'artifact',
-    like_count: 41,
-    comment_count: 11,
-  },
-  {
-    kind: 'note',
-    title: 'Coptic stitch, goat leather',
-    author: { username: 'Lin Q.' },
-    categories: [{ name: 'bookbinding' }],
-    created_at: '3 hr ago',
-    content:
-      'Got the spacing right on the third signature. The first two are coming out.',
-    image_url: null,
-    like_count: 5,
-    comment_count: 1,
-  },
-  {
-    kind: 'card',
-    title: 'First ribbon kiln firing',
-    author: { username: 'Eve M.' },
-    categories: [{ name: 'glass' }],
-    created_at: '4 hr ago',
-    content:
-      'Slumped — but not where I drew the line. Need to read the witness cones.',
-    image_url: 'artifact',
-    like_count: 9,
-    comment_count: 4,
-  },
-  {
-    kind: 'note',
-    title: 'Tatami room — a small one',
-    author: { username: 'Halid N.' },
-    categories: [{ name: 'carpentry' }],
-    created_at: '5 hr ago',
-    content:
-      'Framing is true on three walls. Fourth is the chimney side. Waiting on the mason.',
-    image_url: null,
-    like_count: 14,
-    comment_count: 3,
-  },
-  {
-    kind: 'card',
-    title: 'Kitchen knife from spring steel',
-    author: { username: 'Tomás A.' },
-    categories: [{ name: 'knives' }],
-    created_at: '6 hr ago',
-    content:
-      'Blade is ground, edge is set. Handle scales next — stabilised maple if it arrives.',
-    image_url: 'artifact',
-    like_count: 33,
-    comment_count: 9,
-  },
-  {
-    kind: 'note',
-    title: "Beeswax candles — wick won't stay centered",
-    author: { username: 'Ruth E.' },
-    categories: [{ name: 'candlemaking' }],
-    created_at: '7 hr ago',
-    content:
-      'Tried four mold types. The taper still pulls right. Suspecting the wick prime.',
-    image_url: null,
-    like_count: 6,
-    comment_count: 5,
-  },
-  {
-    kind: 'card',
-    title: 'Shaving horse from green oak',
-    author: { username: 'Sven O.' },
-    categories: [{ name: 'green wood' }],
-    created_at: 'yesterday',
-    content:
-      'Mortises chopped. Bench top split along the heart while drying — keeping it.',
-    image_url: 'artifact',
-    like_count: 18,
-    comment_count: 6,
-  },
-  {
-    kind: 'note',
-    title: 'Indigo vat — third reduction',
-    author: { username: 'Priya S.' },
-    categories: [{ name: 'dye' }],
-    created_at: 'yesterday',
-    content:
-      'Surface flower is finally bronze. Smells right. Test strip overnight.',
-    image_url: null,
-    like_count: 11,
-    comment_count: 2,
-  },
-  {
-    kind: 'card',
-    title: 'Solid-state amp — the hum is back',
-    author: { username: 'Marco C.' },
-    categories: [{ name: 'electronics' }],
-    created_at: '2 days ago',
-    content:
-      'Re-grounded the chassis, swapped the filter cap. Still there at idle. Going to scope the rail.',
-    image_url: 'artifact',
-    like_count: 27,
-    comment_count: 14,
-  },
-  {
-    kind: 'note',
-    title: 'Singer 99K — foot pedal back together',
-    author: { username: 'Hana W.' },
-    categories: [{ name: 'repair' }],
-    created_at: '2 days ago',
-    content:
-      'Carbon stack was the issue, as everyone said. Sews straight now. Smells of old motor oil.',
-    image_url: null,
-    like_count: 19,
-    comment_count: 8,
-  },
-  {
-    kind: 'card',
-    title: 'Saddlebag — bridle leather, hand-stitched',
-    author: { username: 'Idris K.' },
-    categories: [{ name: 'leather' }],
-    created_at: '3 days ago',
-    content:
-      'Edges burnished. Saddle stitch is even — finally. Buckles next week.',
-    image_url: 'artifact',
-    like_count: 14,
-    comment_count: 3,
-  },
-  {
-    kind: 'note',
-    title: 'Dry stone wall — corner stone in',
-    author: { username: 'Beth O.' },
-    categories: [{ name: 'stone' }],
-    created_at: '6 days ago',
-    content:
-      'Found the cornerstone in a hedge. Heavier than it looks. Pinning the first course tomorrow.',
-    image_url: null,
-    like_count: 22,
-    comment_count: 5,
-  },
-]
+function safeExcerpt(raw: string): string {
+  try {
+    return generateText(JSON.parse(raw), [StarterKit]).slice(0, 120).trim()
+  } catch {
+    return raw.slice(0, 120)
+  }
+}
+
+async function fetchPreviewLogs(): Promise<LogEntry[]> {
+  const url = import.meta.env.VITE_API_URL + '/api/v1/logs?limit=15&sort=recent'
+  const res = await fetch(url)
+  if (!res.ok) throw new Error()
+  const data = await res.json()
+  const posts: ApiPost[] = Array.isArray(data.post) ? data.post : []
+  return posts.map((p) => ({
+    post_id: p.post_id,
+    kind: p.image_url ? 'card' : 'note',
+    title: p.title,
+    author: p.author,
+    categories: p.categories,
+    created_at: p.created_at,
+    content: safeExcerpt(p.content),
+    image_url: p.image_url,
+    like_count: p.like_count ?? 0,
+    comment_count: p.comment_count ?? 0,
+  }))
+}
 
 function Artifact() {
   return (
@@ -426,6 +287,11 @@ function NoteCard({ log }: { log: LogEntry }) {
 
 function OnboardingPage() {
   const navigate = useNavigate()
+  const { data: logs = [], isLoading } = useQuery<LogEntry[]>({
+    queryKey: ['onboarding-logs'],
+    queryFn: fetchPreviewLogs,
+    staleTime: 60_000,
+  })
 
   function handleStartLog() {
     navigate({ to: '/logs' }) // Create file logs/new
@@ -577,18 +443,32 @@ function OnboardingPage() {
               textTransform: 'uppercase',
             }}
           >
-            {LOGS.length} shown
+            {isLoading ? '…' : `${logs.length} shown`}
           </span>
         </div>
 
         <div style={{ columnCount: 3, columnGap: 20 }}>
-          {LOGS.map((log, i) =>
-            log.kind === 'card' ? (
-              <LogCard key={i} log={log} />
-            ) : (
-              <NoteCard key={i} log={log} />
-            ),
-          )}
+          {isLoading
+            ? Array.from({ length: 6 }).map((_, i) => (
+                <div
+                  key={i}
+                  style={{
+                    height: 160,
+                    background: 'var(--color-surface)',
+                    border: '1px solid var(--color-border)',
+                    borderRadius: 'var(--radius-md)',
+                    marginBottom: 20,
+                    opacity: 0.4,
+                  }}
+                />
+              ))
+            : logs.map((log) =>
+                log.kind === 'card' ? (
+                  <LogCard key={log.post_id} log={log} />
+                ) : (
+                  <NoteCard key={log.post_id} log={log} />
+                ),
+              )}
         </div>
 
         <div
