@@ -1,4 +1,4 @@
-
+/* eslint-disable @typescript-eslint/no-unnecessary-condition */
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { EditorContent, useEditor } from '@tiptap/react'
