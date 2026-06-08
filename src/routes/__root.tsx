@@ -424,7 +424,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
     registerPush().catch(() => {})
   }, [user])
 
- return (
+  return (
     <html lang="en">
       <head>
         <HeadContent />
@@ -447,7 +447,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
               </div>
             </div>
 
-            {/* UN SEUL BLOC UTILISATEUR PROPRE */}
+            {/* BLOC UTILISATEUR ENTIÈREMENT RESTAURÉ ET CORRIGÉ */}
             {user ? (
               <div className="flex items-center gap-4">
                 <span>avatar</span>
@@ -455,7 +455,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
                 <Link to="/messages" className="btn-ghost">
                   · NEW MESSAGE
                 </Link>
-                
+
                 {/* Bouton Cloche de Notification */}
                 <button
                   type="button"
@@ -500,7 +500,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
                   <NotificationPanel onClose={() => setPanelOpen(false)} />
                 )}
 
-              
+                {/* Rôle Admin / Moderateur */}
                 {(user.role === 'admin' || user.role === 'moderator') && (
                   <span> · ADMIN</span>
                 )}
