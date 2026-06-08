@@ -192,6 +192,7 @@ function LoginPage() {
                   }}
                 >
                   Forgot it?
+                  </Link>
               </div>
               <Input
                 id="password"
