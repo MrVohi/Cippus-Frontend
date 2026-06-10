@@ -4,6 +4,8 @@ import { EditorContent, useEditor } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import { useEffect } from 'react'
 import { useAuthStore } from '#/stores/useAuthStore'
+import { useState } from 'react'
+
 
 export const Route = createFileRoute('/logs/$id/')({
   component: LogDetail,
@@ -38,6 +40,22 @@ function LogDetail() {
   })
 
   const post = data?.post
+  const { data: likesData, refetch: refetchLikes } = useQuery({
+  queryKey: ['likes', id],
+  queryFn: () => fetchLikes(id),
+})
+const likesCount = likesData?.likes ?? 0
+
+const { data: commentsData, refetch: refetchComments } = useQuery({
+  queryKey: ['comments', id],
+  queryFn: () => fetchComments(id),
+})
+const comments = commentsData?.comments ?? []
+
+const [commentContent, setCommentContent] = useState('')
+const [reportReason, setReportReason] = useState('')
+const [showReportForm, setShowReportForm] = useState(false)
+
 
   const editor = useEditor({
     editable: false,
@@ -157,6 +175,71 @@ function LogDetail() {
                 </Link>
               </div>
             )}
+            <div className="flex items-end pb-0.5">
+            <button
+             onClick={async () => {
+              const token = useAuthStore.getState().token
+                if (!token) return
+                  await likePost(id, token)
+                    refetchLikes()
+                       }}
+                         className="font-body text-[13px] text-(--color-text-muted) border-b border-(--color-border) pb-px hover:text-(--color-text-primary) transition-colors duration-[180ms] bg-transparent cursor-pointer"
+                          >
+                            ♥ {likesCount}
+                              </button>
+                                </div>
+
+              {user && !isOwner && (
+                <div className="flex items-end pb-0.5">
+                  <button
+                    onClick={() => setShowReportForm(!showReportForm)}
+                      className="font-body text-[13px] text-(--color-text-muted) border-b border-(--color-border) pb-px hover:text-(--color-text-primary) transition-colors duration-[180ms] bg-transparent cursor-pointer"
+                        >
+                          Report
+                          </button>
+                            </div>
+                              )}
+                    {showReportForm && (
+                  <div className="mt-4 flex flex-col gap-2">
+                    <input
+                      value={reportReason}
+                      onChange={(e) => setReportReason(e.target.value)}
+                      placeholder="Reason for reporting..."
+                      style={{
+                        fontFamily: 'var(--font-body)',
+                        fontSize: 13,
+                        color: 'var(--color-text-primary)',
+                        background: 'transparent',
+                        border: '1px solid var(--color-border)',
+                        padding: '8px 10px',
+                        outline: 'none',
+                        width: '100%',
+                        }}
+                            />
+                        <button
+                      onClick={async () => {
+                      if (!reportReason.trim()) return
+                      const token = useAuthStore.getState().token
+                      if (!token) return
+                      await reportPost(id, reportReason, token)
+                      setReportReason('')
+                      setShowReportForm(false)
+                          }}
+      style={{
+        fontFamily: 'var(--font-body)',
+        fontSize: 13,
+        padding: '8px 16px',
+        background: 'var(--color-accent)',
+        color: 'var(--color-text-on-accent)',
+        border: 'none',
+        cursor: 'pointer',
+        alignSelf: 'flex-start',
+      }}
+    >
+      Submit report
+    </button>
+  </div>
+)}                
           </div>
         </div>
       </section>
@@ -195,18 +278,84 @@ function LogDetail() {
               className="w-full mb-8 border border-(--color-border) object-cover max-h-[480px]"
             />
           )}
+          </div>
 
           <div className="prose-cippus">
             <EditorContent editor={editor} />
           </div>
 
           <div className="mt-14 pt-10 border-t border-(--color-border)">
-            <div className="label text-(--color-text-muted) mb-6">REPLIES</div>
-            <p className="font-body text-[14px] italic text-(--color-text-placeholder)">
-              Comments are coming in the next update.
-            </p>
+  <div className="label text-(--color-text-muted) mb-6">REPLIES</div>
+
+  {user && (
+    <div className="mb-8 flex flex-col gap-3">
+      <textarea
+        value={commentContent}
+        onChange={(e) => setCommentContent(e.target.value)}
+        placeholder="Leave a reply..."
+        rows={3}
+        style={{
+          fontFamily: 'var(--font-body)',
+          fontSize: 14,
+          color: 'var(--color-text-primary)',
+          background: 'transparent',
+          border: '1px solid var(--color-border)',
+          padding: '10px 12px',
+          outline: 'none',
+          resize: 'vertical',
+          width: '100%',
+        }}
+      />
+      <button
+        onClick={async () => {
+          if (!commentContent.trim()) return
+          const token = useAuthStore.getState().token
+          if (!token) return
+          await createComment(id, commentContent, token)
+          setCommentContent('')
+          refetchComments()
+        }}
+        style={{
+          fontFamily: 'var(--font-body)',
+          fontSize: 13,
+          fontWeight: 500,
+          padding: '10px 18px',
+          background: 'var(--color-accent)',
+          color: 'var(--color-text-on-accent)',
+          border: 'none',
+          cursor: 'pointer',
+          alignSelf: 'flex-end',
+        }}
+      >
+        Reply
+      </button>
+    </div>
+  )}
+
+  <div className="flex flex-col gap-6">
+    {comments.length === 0 ? (
+      <p className="font-body text-[14px] italic text-(--color-text-placeholder)">
+        No replies yet. Be the first.
+      </p>
+    ) : (
+      comments.map((comment: { ID: number; Author: { username: string }; Content: string; CreatedAt: string }) => (
+        <div key={comment.ID} className="border-b border-(--color-border) pb-6">
+          <div className="flex justify-between items-center mb-2">
+            <span className="font-body text-[12px] text-(--color-text-muted)">
+              @{comment.Author?.username}
+            </span>
+            <span className="font-body text-[11px] text-(--color-text-placeholder)">
+              {new Date(comment.CreatedAt).toLocaleDateString('en-GB')}
+            </span>
           </div>
+          <p className="font-body text-[14px] text-(--color-text-secondary) m-0">
+            {comment.Content}
+          </p>
         </div>
+      ))
+    )}
+  </div>
+</div>
 
         <aside
           className="row-enter hidden lg:flex flex-col gap-9 sticky top-6"
@@ -277,4 +426,53 @@ function LogDetail() {
       </main>
     </div>
   )
+}
+async function fetchLikes(id: string) {
+  const res = await fetch(import.meta.env.VITE_API_URL + '/api/v1/logs/' + id + '/likes')
+  if (!res.ok) throw new Error()
+  return res.json()
+}
+
+async function likePost(id: string, token: string) {
+  const res = await fetch(import.meta.env.VITE_API_URL + '/api/v1/logs/' + id + '/likes', {
+    method: 'POST',
+    headers: { Authorization: 'Bearer ' + token },
+    credentials: 'include',
+  })
+  if (!res.ok) throw new Error()
+  return res.json()
+}
+
+async function fetchComments(id: string) {
+  const res = await fetch(import.meta.env.VITE_API_URL + '/api/v1/logs/' + id + '/comments')
+  if (!res.ok) throw new Error()
+  return res.json()
+}
+
+async function createComment(id: string, content: string, token: string) {
+  const res = await fetch(import.meta.env.VITE_API_URL + '/api/v1/logs/' + id + '/comments', {
+    method: 'POST',
+    headers: { 
+      'Content-Type': 'application/json',
+      Authorization: 'Bearer ' + token 
+    },
+    credentials: 'include',
+    body: JSON.stringify({ content }),
+  })
+  if (!res.ok) throw new Error()
+  return res.json()
+}
+
+async function reportPost(id: string, reason: string, token: string) {
+  const res = await fetch(import.meta.env.VITE_API_URL + '/api/v1/reports/', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: 'Bearer ' + token,
+    },
+    credentials: 'include',
+    body: JSON.stringify({ content_type: 'post', content_id: Number(id), reason }),
+  })
+  if (!res.ok) throw new Error()
+  return res.json()
 }
