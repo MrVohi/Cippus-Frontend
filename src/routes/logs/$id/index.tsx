@@ -2,9 +2,9 @@ import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { EditorContent, useEditor } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useAuthStore } from '#/stores/useAuthStore'
-import { useState } from 'react'
+
 
 
 export const Route = createFileRoute('/logs/$id/')({
@@ -342,7 +342,7 @@ const [showReportForm, setShowReportForm] = useState(false)
         <div key={comment.ID} className="border-b border-(--color-border) pb-6">
           <div className="flex justify-between items-center mb-2">
             <span className="font-body text-[12px] text-(--color-text-muted)">
-              @{comment.Author?.username}
+              @{comment.Author.username}
             </span>
             <span className="font-body text-[11px] text-(--color-text-placeholder)">
               {new Date(comment.CreatedAt).toLocaleDateString('en-GB')}
