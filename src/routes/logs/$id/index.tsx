@@ -54,6 +54,14 @@ function LogDetail() {
   const [reportReason, setReportReason] = useState('')
   const [showReportForm, setShowReportForm] = useState(false)
 
+  const commentEditor = useEditor({
+  extensions: [StarterKit],
+  content: '',
+  onUpdate: ({ editor }) => {
+    setCommentContent(JSON.stringify(editor.getJSON()))
+    },
+  })
+
   const editor = useEditor({
     editable: false,
     extensions: [StarterKit],
@@ -278,7 +286,7 @@ function LogDetail() {
         </div>
 
         <div className="prose-cippus">
-          <EditorContent editor={editor} />
+          <EditorContent editor={commentEditor} />
         </div>
 
         <div className="mt-14 pt-10 border-t border-(--color-border)">
@@ -286,23 +294,18 @@ function LogDetail() {
 
           {user && (
             <div className="mb-8 flex flex-col gap-3">
-              <textarea
-                value={commentContent}
-                onChange={(e) => setCommentContent(e.target.value)}
-                placeholder="Leave a reply..."
-                rows={3}
-                style={{
-                  fontFamily: 'var(--font-body)',
-                  fontSize: 14,
-                  color: 'var(--color-text-primary)',
-                  background: 'transparent',
-                  border: '1px solid var(--color-border)',
-                  padding: '10px 12px',
-                  outline: 'none',
-                  resize: 'vertical',
-                  width: '100%',
-                }}
-              />
+              <div
+              style={{
+              border: '1px solid var(--color-border)',
+              padding: '10px 12px',
+              minHeight: 80,
+              fontFamily: 'var(--font-body)',
+              fontSize: 14,
+              color: 'var(--color-text-primary)',
+              }}
+              >
+              <EditorContent editor={commentEditor} />
+              </div>
               <button
                 onClick={async () => {
                   if (!commentContent.trim()) return
