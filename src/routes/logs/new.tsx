@@ -11,6 +11,7 @@ import { useForm } from 'react-hook-form'
 import { useEditor, EditorContent } from '@tiptap/react'
 import { useQuery } from '@tanstack/react-query'
 import { useState, useRef, useCallback } from 'react'
+import { flushSync } from 'react-dom'
 import { fetchWithAuth } from '#/lib/api'
 import { useAuthStore } from '#/stores/useAuthStore'
 
@@ -90,6 +91,7 @@ function RouteComponent() {
   const [aiLoading, setAiLoading] = useState(false)
   const [aiSuggestion, setAiSuggestion] = useState<string | null>(null)
   const [submitError, setSubmitError] = useState<string | null>(null)
+  const [uploading, setUploading] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const { data: categories = [] } = useQuery<Category[]>({
@@ -179,6 +181,7 @@ function RouteComponent() {
   }, [aiSuggestion, editor, form])
 
   async function onSubmit(values: FormValues) {
+    flushSync(() => setUploading(true))
     setSubmitError(null)
     const fd = new FormData()
     fd.append('title', values.title)
@@ -194,15 +197,19 @@ function RouteComponent() {
       if (!res.ok) {
         const err = await res.json().catch(() => ({}))
         setSubmitError(err.error ?? 'Something went wrong.')
+        setUploading(false)
         return
       }
       const data = await res.json()
+      const created = data.post
+      const postId = String(created?.post_id ?? data.id)
       navigate({
-        to: '/logs/$id',
-        params: { id: String(data.post?.post_id ?? data.id) },
+        to: created?.stuck ? '/logs/$id/match' : '/logs/$id/',
+        params: { id: postId },
       })
     } catch {
       setSubmitError('Could not reach the server. Try again.')
+      setUploading(false)
     }
   }
 
@@ -213,6 +220,58 @@ function RouteComponent() {
 
   return (
     <div className="min-h-screen flex flex-col bg-(--color-bg)">
+      {uploading && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 50,
+            background: 'color-mix(in oklab, var(--color-bg) 88%, transparent)',
+            backdropFilter: 'blur(4px)',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 20,
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <span
+              aria-hidden
+              style={{
+                width: 8,
+                height: 8,
+                borderRadius: '50%',
+                background: 'var(--color-accent)',
+                animation: 'cip-live 1.2s ease-in-out infinite',
+                flexShrink: 0,
+              }}
+            />
+            <span
+              style={{
+                fontFamily: 'var(--font-display)',
+                fontSize: 22,
+                fontWeight: 500,
+                color: 'var(--color-text-primary)',
+                letterSpacing: '-0.005em',
+              }}
+            >
+              Publishing your log…
+            </span>
+          </div>
+          <p
+            style={{
+              fontFamily: 'var(--font-body)',
+              fontSize: 13,
+              fontStyle: 'italic',
+              color: 'var(--color-text-muted)',
+              margin: 0,
+            }}
+          >
+            Generating embedding and running moderation check.
+          </p>
+        </div>
+      )}
       <div
         className="row-enter max-w-[1240px] mx-auto w-full px-4 sm:px-8 lg:px-14 pt-10 pb-8"
         style={{ animationDelay: '0ms' }}

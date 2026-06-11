@@ -16,6 +16,15 @@ async function fetchPost(id: string) {
   return response.json()
 }
 
+async function fetchSimilar(id: string) {
+  const url = import.meta.env.VITE_API_URL + '/api/v1/logs/' + id + '/similar'
+  const response = await fetch(url)
+  if (response.status === 404) return []
+  if (!response.ok) return []
+  const data = await response.json()
+  return data.results ?? []
+}
+
 function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString('en-GB', {
     day: 'numeric',
@@ -38,6 +47,13 @@ function LogDetail() {
   })
 
   const post = data?.post
+
+  const { data: similarData } = useQuery({
+    queryKey: ['similar', id],
+    queryFn: () => fetchSimilar(id),
+    enabled: !!post,
+  })
+  const matches: any[] = similarData ?? []
 
   const editor = useEditor({
     editable: false,
@@ -173,8 +189,15 @@ function LogDetail() {
             />
             <span className="label text-(--color-accent)">STUCK</span>
             <span className="font-body text-[13px] italic text-(--color-text-muted)">
-              Builder is stuck at this stage — match moment may be available.
+              Builder is stuck at this stage.
             </span>
+            <Link
+              to="/logs/$id/match"
+              params={{ id }}
+              className="font-body text-[13px] text-(--color-accent) no-underline border-b border-(--color-accent) pb-px ml-1 hover:opacity-70 transition-opacity duration-[180ms]"
+            >
+              Find matches →
+            </Link>
           </div>
         </div>
       ) : (
@@ -265,9 +288,43 @@ function LogDetail() {
             <div className="label text-(--color-text-muted) mb-2.5">
               MATCHES
             </div>
-            <p className="font-body text-[13px] italic text-(--color-text-placeholder)">
-              Semantic matching coming soon.
-            </p>
+            {matches.length > 0 ? (
+              <div className="flex flex-col gap-3.5">
+                {matches.slice(0, 3).map((m: any) => (
+                  <Link
+                    key={m.post_id ?? m.id}
+                    to="/logs/$id/"
+                    params={{ id: String(m.post_id ?? m.id) }}
+                    className="no-underline group"
+                  >
+                    <div className="font-body text-[13px] text-(--color-text-primary) group-hover:text-(--color-accent) transition-colors duration-[180ms] leading-snug">
+                      {m.title}
+                    </div>
+                    <div className="font-body text-[11px] text-(--color-text-placeholder) mt-0.5">
+                      {m.author?.username}
+                    </div>
+                  </Link>
+                ))}
+                {matches.length > 3 && (
+                  <p className="font-body text-[12px] italic text-(--color-text-placeholder)">
+                    +{matches.length - 3} more similar logs
+                  </p>
+                )}
+                {post.stuck && (
+                  <Link
+                    to="/logs/$id/match"
+                    params={{ id }}
+                    className="font-body text-[12px] text-(--color-accent) no-underline border-b border-(--color-accent) pb-px self-start hover:opacity-70 transition-opacity duration-[180ms]"
+                  >
+                    View all matches →
+                  </Link>
+                )}
+              </div>
+            ) : (
+              <p className="font-body text-[13px] italic text-(--color-text-placeholder)">
+                No match moment yet.
+              </p>
+            )}
           </div>
 
           <div className="pt-5 border-t border-(--color-border) font-body text-[12px] italic text-(--color-text-placeholder) leading-relaxed">
