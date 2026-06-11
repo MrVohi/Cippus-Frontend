@@ -19,7 +19,7 @@ function getExcerpt(content: string): string {
 async function fetchUserPosts(userID: number, token: string) {
   const res = await fetch(
     import.meta.env.VITE_API_URL + '/api/v1/users/' + userID + '/posts',
-    { headers: { Authorization: 'Bearer ' + token } }
+    { headers: { Authorization: 'Bearer ' + token } },
   )
   if (!res.ok) throw new Error()
   return res.json()
@@ -62,11 +62,16 @@ function ProfilePage() {
         <div className="label text-(--color-text-muted) mb-6">MY LOGS</div>
 
         {isLoading ? (
-          <p className="font-body text-sm italic text-(--color-text-muted)">Loading…</p>
+          <p className="font-body text-sm italic text-(--color-text-muted)">
+            Loading…
+          </p>
         ) : posts.length === 0 ? (
           <p className="font-body text-[14px] italic text-(--color-text-placeholder)">
             No logs yet.{' '}
-            <Link to="/logs/new" className="text-(--color-text-primary) border-b border-(--color-text-primary)">
+            <Link
+              to="/logs/new"
+              className="text-(--color-text-primary) border-b border-(--color-text-primary)"
+            >
               Start one →
             </Link>
           </p>
