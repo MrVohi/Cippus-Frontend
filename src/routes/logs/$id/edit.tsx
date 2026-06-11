@@ -11,6 +11,7 @@ import { useForm } from 'react-hook-form'
 import { useEditor, EditorContent } from '@tiptap/react'
 import { useQuery } from '@tanstack/react-query'
 import { useState, useRef, useCallback, useEffect } from 'react'
+import { flushSync } from 'react-dom'
 import { fetchWithAuth } from '#/lib/api'
 import { useAuthStore } from '#/stores/useAuthStore'
 
@@ -33,6 +34,7 @@ const schema = z.object({
   imageFile: z.custom<File | null>(
     (v) => v === null || (typeof File !== 'undefined' && v instanceof File),
   ),
+  stuck: z.boolean(),
 })
 
 type FormValues = z.infer<typeof schema>
@@ -109,6 +111,7 @@ function RouteComponent() {
   const [aiLoading, setAiLoading] = useState(false)
   const [aiSuggestion, setAiSuggestion] = useState<string | null>(null)
   const [submitError, setSubmitError] = useState<string | null>(null)
+  const [uploading, setUploading] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const formInitialized = useRef(false)
   const editorInitialized = useRef(false)
@@ -128,7 +131,13 @@ function RouteComponent() {
 
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
-    defaultValues: { title: '', content: '', categoryIds: [], imageFile: null },
+    defaultValues: {
+      title: '',
+      content: '',
+      categoryIds: [],
+      imageFile: null,
+      stuck: false,
+    },
   })
 
   const {
@@ -137,6 +146,7 @@ function RouteComponent() {
   } = form
   const watchedTitle = watch('title')
   const watchedCategoryIds = watch('categoryIds')
+  const watchedStuck = watch('stuck')
 
   const editor = useEditor({
     editable: true,
@@ -155,6 +165,7 @@ function RouteComponent() {
       content: post.content,
       categoryIds: post.categories.map((c: Category) => c.category_id),
       imageFile: null,
+      stuck: post.stuck ?? false,
     })
     setExistingImageUrl(post.image_url ?? null)
     formInitialized.current = true
@@ -228,6 +239,7 @@ function RouteComponent() {
   }, [aiSuggestion, editor, form])
 
   async function onSubmit(values: FormValues) {
+    flushSync(() => setUploading(true))
     setSubmitError(null)
     const fd = new FormData()
     fd.append('title', values.title)
@@ -237,6 +249,7 @@ function RouteComponent() {
     )
     if (values.imageFile) fd.append('image', values.imageFile)
     if (imageRemoved) fd.append('remove_image', 'true')
+    fd.append('stuck', String(values.stuck))
 
     try {
       const res = await fetchWithAuth('/api/v1/logs/' + id, {
@@ -246,6 +259,7 @@ function RouteComponent() {
       if (!res.ok) {
         const err = await res.json().catch(() => ({}))
         setSubmitError(err.error ?? 'Something went wrong.')
+        setUploading(false)
         return
       }
       const json = await res.json()
@@ -255,6 +269,7 @@ function RouteComponent() {
       })
     } catch {
       setSubmitError('Could not reach the server. Try again.')
+      setUploading(false)
     }
   }
 
@@ -292,6 +307,58 @@ function RouteComponent() {
 
   return (
     <div className="min-h-screen flex flex-col bg-(--color-bg)">
+      {uploading && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 50,
+            background: 'color-mix(in oklab, var(--color-bg) 88%, transparent)',
+            backdropFilter: 'blur(4px)',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 20,
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <span
+              aria-hidden
+              style={{
+                width: 8,
+                height: 8,
+                borderRadius: '50%',
+                background: 'var(--color-accent)',
+                animation: 'cip-live 1.2s ease-in-out infinite',
+                flexShrink: 0,
+              }}
+            />
+            <span
+              style={{
+                fontFamily: 'var(--font-display)',
+                fontSize: 22,
+                fontWeight: 500,
+                color: 'var(--color-text-primary)',
+                letterSpacing: '-0.005em',
+              }}
+            >
+              Saving changes…
+            </span>
+          </div>
+          <p
+            style={{
+              fontFamily: 'var(--font-body)',
+              fontSize: 13,
+              fontStyle: 'italic',
+              color: 'var(--color-text-muted)',
+              margin: 0,
+            }}
+          >
+            Regenerating embedding and running moderation check.
+          </p>
+        </div>
+      )}
       <div
         className="row-enter max-w-[1240px] mx-auto w-full px-4 sm:px-8 lg:px-14 pt-10 pb-8"
         style={{ animationDelay: '0ms' }}
@@ -508,6 +575,38 @@ function RouteComponent() {
                 </div>
               )}
             </div>
+          </div>
+
+          <div>
+            <div className="label text-(--color-text-muted) mb-2.5">STATUS</div>
+            <button
+              type="button"
+              onClick={() =>
+                form.setValue('stuck', !watchedStuck, {
+                  shouldValidate: true,
+                })
+              }
+              className="w-full font-body text-[13px] tracking-[0.04em] px-4 py-2.5 border cursor-pointer transition-colors duration-[180ms]"
+              style={{
+                color: watchedStuck
+                  ? 'var(--color-accent)'
+                  : 'var(--color-text-muted)',
+                borderColor: watchedStuck
+                  ? 'var(--color-accent)'
+                  : 'var(--color-border)',
+                background: watchedStuck
+                  ? 'var(--color-accent-subtle)'
+                  : 'transparent',
+                textAlign: 'left',
+              }}
+            >
+              {watchedStuck ? '● Stuck on this' : '○ Building fine'}
+            </button>
+            <p className="font-body text-[12px] italic text-(--color-text-placeholder) mt-2 mb-0">
+              {watchedStuck
+                ? 'Matches will be surfaced to help you unblock.'
+                : 'Toggle if you hit a wall and want help finding matches.'}
+            </p>
           </div>
 
           <div>

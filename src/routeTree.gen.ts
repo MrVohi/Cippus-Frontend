@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SearchRouteImport } from './routes/search'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as MessagesIndexRouteImport } from './routes/messages/index'
@@ -21,8 +22,14 @@ import { Route as AuthRegisterRouteImport } from './routes/auth/register'
 import { Route as AuthPasswordResetRouteImport } from './routes/auth/password-reset'
 import { Route as AuthLoginRouteImport } from './routes/auth/login'
 import { Route as LogsIdIndexRouteImport } from './routes/logs/$id/index'
+import { Route as LogsIdMatchRouteImport } from './routes/logs/$id/match'
 import { Route as LogsIdEditRouteImport } from './routes/logs/$id/edit'
 
+const SearchRoute = SearchRouteImport.update({
+  id: '/search',
+  path: '/search',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const OnboardingRoute = OnboardingRouteImport.update({
   id: '/onboarding',
   path: '/onboarding',
@@ -83,6 +90,11 @@ const LogsIdIndexRoute = LogsIdIndexRouteImport.update({
   path: '/',
   getParentRoute: () => LogsIdRoute,
 } as any)
+const LogsIdMatchRoute = LogsIdMatchRouteImport.update({
+  id: '/match',
+  path: '/match',
+  getParentRoute: () => LogsIdRoute,
+} as any)
 const LogsIdEditRoute = LogsIdEditRouteImport.update({
   id: '/edit',
   path: '/edit',
@@ -92,6 +104,7 @@ const LogsIdEditRoute = LogsIdEditRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/onboarding': typeof OnboardingRoute
+  '/search': typeof SearchRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/password-reset': typeof AuthPasswordResetRoute
   '/auth/register': typeof AuthRegisterRoute
@@ -102,11 +115,13 @@ export interface FileRoutesByFullPath {
   '/logs/': typeof LogsIndexRoute
   '/messages/': typeof MessagesIndexRoute
   '/logs/$id/edit': typeof LogsIdEditRoute
+  '/logs/$id/match': typeof LogsIdMatchRoute
   '/logs/$id/': typeof LogsIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/onboarding': typeof OnboardingRoute
+  '/search': typeof SearchRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/password-reset': typeof AuthPasswordResetRoute
   '/auth/register': typeof AuthRegisterRoute
@@ -116,12 +131,14 @@ export interface FileRoutesByTo {
   '/logs': typeof LogsIndexRoute
   '/messages': typeof MessagesIndexRoute
   '/logs/$id/edit': typeof LogsIdEditRoute
+  '/logs/$id/match': typeof LogsIdMatchRoute
   '/logs/$id': typeof LogsIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/onboarding': typeof OnboardingRoute
+  '/search': typeof SearchRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/password-reset': typeof AuthPasswordResetRoute
   '/auth/register': typeof AuthRegisterRoute
@@ -132,6 +149,7 @@ export interface FileRoutesById {
   '/logs/': typeof LogsIndexRoute
   '/messages/': typeof MessagesIndexRoute
   '/logs/$id/edit': typeof LogsIdEditRoute
+  '/logs/$id/match': typeof LogsIdMatchRoute
   '/logs/$id/': typeof LogsIdIndexRoute
 }
 export interface FileRouteTypes {
@@ -139,6 +157,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/onboarding'
+    | '/search'
     | '/auth/login'
     | '/auth/password-reset'
     | '/auth/register'
@@ -149,11 +168,13 @@ export interface FileRouteTypes {
     | '/logs/'
     | '/messages/'
     | '/logs/$id/edit'
+    | '/logs/$id/match'
     | '/logs/$id/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/onboarding'
+    | '/search'
     | '/auth/login'
     | '/auth/password-reset'
     | '/auth/register'
@@ -163,11 +184,13 @@ export interface FileRouteTypes {
     | '/logs'
     | '/messages'
     | '/logs/$id/edit'
+    | '/logs/$id/match'
     | '/logs/$id'
   id:
     | '__root__'
     | '/'
     | '/onboarding'
+    | '/search'
     | '/auth/login'
     | '/auth/password-reset'
     | '/auth/register'
@@ -178,12 +201,14 @@ export interface FileRouteTypes {
     | '/logs/'
     | '/messages/'
     | '/logs/$id/edit'
+    | '/logs/$id/match'
     | '/logs/$id/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   OnboardingRoute: typeof OnboardingRoute
+  SearchRoute: typeof SearchRoute
   AuthLoginRoute: typeof AuthLoginRoute
   AuthPasswordResetRoute: typeof AuthPasswordResetRoute
   AuthRegisterRoute: typeof AuthRegisterRoute
@@ -197,6 +222,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/search': {
+      id: '/search'
+      path: '/search'
+      fullPath: '/search'
+      preLoaderRoute: typeof SearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/onboarding': {
       id: '/onboarding'
       path: '/onboarding'
@@ -281,6 +313,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LogsIdIndexRouteImport
       parentRoute: typeof LogsIdRoute
     }
+    '/logs/$id/match': {
+      id: '/logs/$id/match'
+      path: '/match'
+      fullPath: '/logs/$id/match'
+      preLoaderRoute: typeof LogsIdMatchRouteImport
+      parentRoute: typeof LogsIdRoute
+    }
     '/logs/$id/edit': {
       id: '/logs/$id/edit'
       path: '/edit'
@@ -293,11 +332,13 @@ declare module '@tanstack/react-router' {
 
 interface LogsIdRouteChildren {
   LogsIdEditRoute: typeof LogsIdEditRoute
+  LogsIdMatchRoute: typeof LogsIdMatchRoute
   LogsIdIndexRoute: typeof LogsIdIndexRoute
 }
 
 const LogsIdRouteChildren: LogsIdRouteChildren = {
   LogsIdEditRoute: LogsIdEditRoute,
+  LogsIdMatchRoute: LogsIdMatchRoute,
   LogsIdIndexRoute: LogsIdIndexRoute,
 }
 
@@ -307,6 +348,7 @@ const LogsIdRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   OnboardingRoute: OnboardingRoute,
+  SearchRoute: SearchRoute,
   AuthLoginRoute: AuthLoginRoute,
   AuthPasswordResetRoute: AuthPasswordResetRoute,
   AuthRegisterRoute: AuthRegisterRoute,
