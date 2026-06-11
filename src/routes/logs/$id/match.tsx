@@ -60,8 +60,6 @@ function closenessFor(score: number): string {
   return 'SAME CRAFT'
 }
 
-// ─── Constellation ───────────────────────────────────────────────────────────
-
 const VW = 600
 const VH = 600
 const CX = VW / 2
@@ -159,10 +157,8 @@ function Constellation({
         </pattern>
       </defs>
 
-      {/* Background dot grid */}
       <rect width={VW} height={VH} fill="url(#dots)" />
 
-      {/* Lines: center → each star */}
       {positions.map((pos, i) => {
         const len = Math.hypot(pos.x - CX, pos.y - CY)
         const revealed = revealedLines.has(i)
@@ -190,7 +186,6 @@ function Constellation({
         )
       })}
 
-      {/* Center star (your log) */}
       <g
         style={{
           transform: `scale(${centerReady ? 1 : 0})`,
@@ -221,7 +216,6 @@ function Constellation({
         </text>
       )}
 
-      {/* Match stars */}
       {positions.map((pos, i) => {
         const result = results[i]
         const revealed = revealedStars.has(i)
@@ -231,7 +225,6 @@ function Constellation({
         const score = result.score ?? result.distance ?? 0.5
         const closeness = closenessFor(score)
 
-        // Label direction: away from center
         const dx = pos.x - CX
         const dy = pos.y - CY
         const norm = Math.hypot(dx, dy)
@@ -247,7 +240,7 @@ function Constellation({
             onClick={() => {
               if (!revealed) return
               if (active) {
-                navigate({ to: '/logs/$id/', params: { id: matchId } })
+                navigate({ to: '/logs/$id', params: { id: matchId } })
               } else {
                 onActivate(i)
               }
@@ -255,10 +248,8 @@ function Constellation({
             onMouseEnter={() => revealed && onActivate(i)}
             onMouseLeave={() => onActivate(null)}
           >
-            {/* Hit area */}
             <circle cx={0} cy={0} r={22} fill="transparent" />
 
-            {/* Glow ring (active only) */}
             <circle
               cx={0}
               cy={0}
@@ -270,7 +261,6 @@ function Constellation({
               }}
             />
 
-            {/* Star dot — spring reveal via scale */}
             <g
               style={{
                 transform: `scale(${revealed ? 1 : 0})`,
@@ -290,7 +280,6 @@ function Constellation({
               />
             </g>
 
-            {/* Username label */}
             {revealed && (
               <text
                 x={ldx}
@@ -313,7 +302,6 @@ function Constellation({
               </text>
             )}
 
-            {/* Closeness badge (active only) */}
             {active && revealed && (
               <text
                 x={ldx}
@@ -334,8 +322,6 @@ function Constellation({
     </svg>
   )
 }
-
-// ─── Left panel components ────────────────────────────────────────────────────
 
 function YourEntry({ post, userInitial }: { post: any; userInitial: string }) {
   const category = post.categories?.[0]?.name ?? ''
@@ -561,7 +547,7 @@ function MatchDetail({ result }: { result: any }) {
       >
         {matchId && (
           <Link
-            to="/logs/$id/"
+            to="/logs/$id"
             params={{ id: matchId }}
             style={{
               fontFamily: 'var(--font-body)',
@@ -577,8 +563,7 @@ function MatchDetail({ result }: { result: any }) {
         )}
         {result.author?.id && (
           <Link
-            to="/messages/$userId"
-            params={{ userId: String(result.author.id) }}
+            to="/messages"
             style={{
               fontFamily: 'var(--font-body)',
               fontSize: 13,
@@ -594,12 +579,10 @@ function MatchDetail({ result }: { result: any }) {
   )
 }
 
-// ─── Route ────────────────────────────────────────────────────────────────────
-
 function RouteComponent() {
   const { id } = Route.useParams()
   const user = useAuthStore((s) => s.user)
-  const userInitial = user?.username?.[0]?.toUpperCase() ?? '?'
+  const userInitial = user?.username[0]?.toUpperCase() ?? '?'
   const [activeIndex, setActiveIndex] = useState<number | null>(null)
 
   const sourceQuery = useQuery({
@@ -640,13 +623,12 @@ function RouteComponent() {
 
   return (
     <div className="flex flex-col bg-(--color-bg) h-screen overflow-hidden">
-      {/* Back link */}
       <div
         style={{ borderBottom: '1px solid var(--color-border)', flexShrink: 0 }}
       >
         <div className="max-w-[1320px] mx-auto px-4 sm:px-8 lg:px-14 py-5">
           <Link
-            to="/logs/$id/"
+            to="/logs/$id"
             params={{ id }}
             className="font-body text-[13px] text-(--color-text-muted) no-underline hover:text-(--color-text-primary) transition-colors duration-[180ms]"
           >
@@ -656,7 +638,6 @@ function RouteComponent() {
       </div>
 
       <div className="flex flex-1 overflow-hidden">
-        {/* Left panel: your log + active match detail */}
         <div
           className="hidden lg:flex lg:flex-col w-[360px] flex-shrink-0 overflow-y-auto border-r px-9 pt-11 pb-10 gap-10"
           style={{ borderColor: 'var(--color-border)' }}
@@ -670,7 +651,6 @@ function RouteComponent() {
           )}
         </div>
 
-        {/* Constellation area */}
         <div className="flex-1 flex items-center justify-center overflow-hidden">
           {results.length === 0 ? (
             <p

@@ -204,7 +204,7 @@ function RouteComponent() {
       const created = data.post
       const postId = String(created?.post_id ?? data.id)
       navigate({
-        to: created?.stuck ? '/logs/$id/match' : '/logs/$id/',
+        to: created?.stuck ? '/logs/$id/match' : '/logs/$id',
         params: { id: postId },
       })
     } catch {

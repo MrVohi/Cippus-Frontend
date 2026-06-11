@@ -293,7 +293,7 @@ function LogDetail() {
                 {matches.slice(0, 3).map((m: any) => (
                   <Link
                     key={m.post_id ?? m.id}
-                    to="/logs/$id/"
+                    to="/logs/$id"
                     params={{ id: String(m.post_id ?? m.id) }}
                     className="no-underline group"
                   >

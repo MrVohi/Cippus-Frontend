@@ -264,7 +264,7 @@ function RouteComponent() {
       }
       const json = await res.json()
       navigate({
-        to: '/logs/$id/',
+        to: '/logs/$id',
         params: { id: String(json.post?.post_id ?? json.id) },
       })
     } catch {
@@ -299,7 +299,7 @@ function RouteComponent() {
   }
 
   if (user?.id !== post.author_id) {
-    navigate({ to: '/logs/$id/', params: { id } })
+    navigate({ to: '/logs/$id', params: { id } })
     return null
   }
 
@@ -364,7 +364,7 @@ function RouteComponent() {
         style={{ animationDelay: '0ms' }}
       >
         <Link
-          to="/logs/$id/"
+          to="/logs/$id"
           params={{ id }}
           className="inline-flex items-center gap-2 font-body text-[12px] tracking-[0.16em] uppercase text-(--color-text-muted) no-underline mb-6 hover:text-(--color-text-primary) transition-colors duration-[180ms]"
         >
@@ -723,7 +723,7 @@ function RouteComponent() {
             </button>
 
             <Link
-              to="/logs/$id/"
+              to="/logs/$id"
               params={{ id }}
               className="font-body text-[13px] text-center text-(--color-text-muted) no-underline hover:text-(--color-text-primary) transition-colors duration-[180ms]"
             >
