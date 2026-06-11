@@ -55,10 +55,10 @@ function LogDetail() {
   const [showReportForm, setShowReportForm] = useState(false)
 
   const commentEditor = useEditor({
-  extensions: [StarterKit],
-  content: '',
-  onUpdate: ({ editor }) => {
-    setCommentContent(JSON.stringify(editor.getJSON()))
+    extensions: [StarterKit],
+    content: '',
+    onUpdate: ({ editor }) => {
+      setCommentContent(JSON.stringify(editor.getJSON()))
     },
   })
 
@@ -295,16 +295,16 @@ function LogDetail() {
           {user && (
             <div className="mb-8 flex flex-col gap-3">
               <div
-              style={{
-              border: '1px solid var(--color-border)',
-              padding: '10px 12px',
-              minHeight: 80,
-              fontFamily: 'var(--font-body)',
-              fontSize: 14,
-              color: 'var(--color-text-primary)',
-              }}
+                style={{
+                  border: '1px solid var(--color-border)',
+                  padding: '10px 12px',
+                  minHeight: 80,
+                  fontFamily: 'var(--font-body)',
+                  fontSize: 14,
+                  color: 'var(--color-text-primary)',
+                }}
               >
-              <EditorContent editor={commentEditor} />
+                <EditorContent editor={commentEditor} />
               </div>
               <button
                 onClick={async () => {
