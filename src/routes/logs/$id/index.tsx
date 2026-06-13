@@ -689,11 +689,7 @@ function LogDetail() {
       qc.setQueryData(['post-likes', id], likeData)
       setUserLiked(likeData.user_liked)
     },
-    onError: (
-      _err: unknown,
-      _v: unknown,
-      ctx: { prev: unknown } | undefined,
-    ) => {
+    onError: (_err, _v, ctx: { prev: unknown } | undefined) => {
       if (ctx?.prev) qc.setQueryData(['post-likes', id], ctx.prev)
       setUserLiked((v) => !v)
     },

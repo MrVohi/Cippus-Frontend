@@ -823,3 +823,29 @@ body {
   padding: 0;
   font-size: inherit;
 }
+
+@keyframes sheet-enter {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.sheet-enter {
+  animation: sheet-enter 300ms var(--ease-spring) both;
+}
+
+@keyframes close-bar-fill {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+.close-bar {
+  animation: close-bar-fill 1800ms linear forwards;
+}
