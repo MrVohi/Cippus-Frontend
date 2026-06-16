@@ -298,6 +298,7 @@ function LogsPage() {
               builder={post.author?.username ?? ''}
               builderInitial={(post.author?.username?.[0] ?? '?').toUpperCase()}
               avatarUrl={post.author?.avatar_url ?? null}
+              imageUrl={post.image_url || null}
               when={formatWhen(post.created_at)}
               title={post.title}
               excerpt={getExcerpt(post.content)}
