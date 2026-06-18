@@ -415,7 +415,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
     registerPush().catch(() => {})
   }, [user])
 
-  const initial = user?.username?.[0]?.toUpperCase() ?? '?'
+  const initial = user?.username[0]?.toUpperCase() ?? '?'
 
   return (
     <html lang="en">

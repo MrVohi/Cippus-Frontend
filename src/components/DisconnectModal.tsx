@@ -29,7 +29,7 @@ export function DisconnectModal({ onClose }: Props) {
     navigate({ to: '/' })
   }
 
-  const initial = user?.username?.[0]?.toUpperCase() ?? '?'
+  const initial = user?.username[0]?.toUpperCase() ?? '?'
 
   return (
     <>
@@ -147,12 +147,10 @@ export function DisconnectModal({ onClose }: Props) {
                 'background var(--duration-fast) var(--ease-base), transform var(--duration-fast) var(--ease-base)',
             }}
             onMouseEnter={(e) => {
-              ;(e.currentTarget as HTMLButtonElement).style.background =
-                'var(--color-accent-hover)'
+              e.currentTarget.style.background = 'var(--color-accent-hover)'
             }}
             onMouseLeave={(e) => {
-              ;(e.currentTarget as HTMLButtonElement).style.background =
-                'var(--color-accent)'
+              e.currentTarget.style.background = 'var(--color-accent)'
             }}
           >
             Sign out
@@ -174,14 +172,12 @@ export function DisconnectModal({ onClose }: Props) {
                 'border-color var(--duration-fast) var(--ease-base), color var(--duration-fast) var(--ease-base)',
             }}
             onMouseEnter={(e) => {
-              const el = e.currentTarget as HTMLButtonElement
-              el.style.borderColor = 'var(--color-text-secondary)'
-              el.style.color = 'var(--color-text-primary)'
+              e.currentTarget.style.borderColor = 'var(--color-text-secondary)'
+              e.currentTarget.style.color = 'var(--color-text-primary)'
             }}
             onMouseLeave={(e) => {
-              const el = e.currentTarget as HTMLButtonElement
-              el.style.borderColor = 'var(--color-border)'
-              el.style.color = 'var(--color-text-muted)'
+              e.currentTarget.style.borderColor = 'var(--color-border)'
+              e.currentTarget.style.color = 'var(--color-text-muted)'
             }}
           >
             Stay signed in
