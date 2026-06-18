@@ -331,9 +331,13 @@ function CommentItem({
       {comment.author && <Avatar user={comment.author} />}
       <div className="flex-1 min-w-0">
         <div className="flex items-baseline gap-2 mb-1">
-          <span className="font-body text-[14px] text-(--color-text-primary)">
+          <Link
+            to="/profile/$userId"
+            params={{ userId: String(comment.author?.user_id) }}
+            className="font-body text-[14px] text-(--color-text-primary) no-underline hover:underline"
+          >
             {comment.author?.username ?? 'unknown'}
-          </span>
+          </Link>
           <span className="font-body text-[12px] text-(--color-text-placeholder)">
             {timeAgo(comment.created_at)}
           </span>
@@ -774,9 +778,13 @@ function LogDetail() {
         <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_auto] items-end gap-8 lg:gap-12">
           <div className="min-w-0">
             <div className="flex items-center gap-3 mb-3.5">
-              <span className="label text-(--color-text-muted)">
+              <Link
+                to="/profile/$userId"
+                params={{ userId: String(post.author_id) }}
+                className="label text-(--color-text-muted) no-underline hover:text-(--color-text-primary) transition-colors duration-[180ms]"
+              >
                 {post.author?.username?.toUpperCase()}
-              </span>
+              </Link>
               {isOwner && (
                 <Link
                   to="/logs/$id/edit"

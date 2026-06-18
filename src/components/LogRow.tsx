@@ -1,8 +1,9 @@
-import { Link } from '@tanstack/react-router'
+import { Link, useNavigate } from '@tanstack/react-router'
 
 export interface LogRowProps {
   id: number
   builder: string
+  builderId?: number
   builderInitial: string
   avatarUrl: string | null
   imageUrl?: string | null
@@ -18,6 +19,7 @@ export interface LogRowProps {
 export function LogRow({
   id,
   builder,
+  builderId,
   builderInitial,
   avatarUrl,
   imageUrl,
@@ -29,6 +31,7 @@ export function LogRow({
   isStuck = false,
   isMatch = false,
 }: LogRowProps) {
+  const navigate = useNavigate()
   return (
     <Link
       to="/logs/$id"
@@ -58,7 +61,20 @@ export function LogRow({
           <div className="min-w-0 flex-1 flex gap-4 items-start">
             <div className="min-w-0 flex-1">
               <div className="flex items-baseline gap-[10px] font-body text-[13px] text-(--color-text-muted) mb-[6px]">
-                <span className="text-(--color-text-primary)">{builder}</span>
+                <span
+                  className="text-(--color-text-primary) hover:underline cursor-pointer"
+                  onClick={(e) => {
+                    if (!builderId) return
+                    e.preventDefault()
+                    e.stopPropagation()
+                    navigate({
+                      to: '/profile/$userId',
+                      params: { userId: String(builderId) },
+                    })
+                  }}
+                >
+                  {builder}
+                </span>
                 <span
                   aria-hidden
                   className="w-[3px] h-[3px] rounded-full bg-(--color-text-placeholder) inline-block self-center"

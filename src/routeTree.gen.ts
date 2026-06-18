@@ -14,6 +14,8 @@ import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as MessagesIndexRouteImport } from './routes/messages/index'
 import { Route as LogsIndexRouteImport } from './routes/logs/index'
+import { Route as ProfileEditRouteImport } from './routes/profile/edit'
+import { Route as ProfileUserIdRouteImport } from './routes/profile/$userId'
 import { Route as LogsNewRouteImport } from './routes/logs/new'
 import { Route as LogsIdRouteImport } from './routes/logs/$id'
 import { Route as CategoryIdRouteImport } from './routes/category/$id'
@@ -48,6 +50,16 @@ const MessagesIndexRoute = MessagesIndexRouteImport.update({
 const LogsIndexRoute = LogsIndexRouteImport.update({
   id: '/logs/',
   path: '/logs/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfileEditRoute = ProfileEditRouteImport.update({
+  id: '/profile/edit',
+  path: '/profile/edit',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfileUserIdRoute = ProfileUserIdRouteImport.update({
+  id: '/profile/$userId',
+  path: '/profile/$userId',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LogsNewRoute = LogsNewRouteImport.update({
@@ -112,6 +124,8 @@ export interface FileRoutesByFullPath {
   '/category/$id': typeof CategoryIdRoute
   '/logs/$id': typeof LogsIdRouteWithChildren
   '/logs/new': typeof LogsNewRoute
+  '/profile/$userId': typeof ProfileUserIdRoute
+  '/profile/edit': typeof ProfileEditRoute
   '/logs/': typeof LogsIndexRoute
   '/messages/': typeof MessagesIndexRoute
   '/logs/$id/edit': typeof LogsIdEditRoute
@@ -128,6 +142,8 @@ export interface FileRoutesByTo {
   '/auth/setup': typeof AuthSetupRoute
   '/category/$id': typeof CategoryIdRoute
   '/logs/new': typeof LogsNewRoute
+  '/profile/$userId': typeof ProfileUserIdRoute
+  '/profile/edit': typeof ProfileEditRoute
   '/logs': typeof LogsIndexRoute
   '/messages': typeof MessagesIndexRoute
   '/logs/$id/edit': typeof LogsIdEditRoute
@@ -146,6 +162,8 @@ export interface FileRoutesById {
   '/category/$id': typeof CategoryIdRoute
   '/logs/$id': typeof LogsIdRouteWithChildren
   '/logs/new': typeof LogsNewRoute
+  '/profile/$userId': typeof ProfileUserIdRoute
+  '/profile/edit': typeof ProfileEditRoute
   '/logs/': typeof LogsIndexRoute
   '/messages/': typeof MessagesIndexRoute
   '/logs/$id/edit': typeof LogsIdEditRoute
@@ -165,6 +183,8 @@ export interface FileRouteTypes {
     | '/category/$id'
     | '/logs/$id'
     | '/logs/new'
+    | '/profile/$userId'
+    | '/profile/edit'
     | '/logs/'
     | '/messages/'
     | '/logs/$id/edit'
@@ -181,6 +201,8 @@ export interface FileRouteTypes {
     | '/auth/setup'
     | '/category/$id'
     | '/logs/new'
+    | '/profile/$userId'
+    | '/profile/edit'
     | '/logs'
     | '/messages'
     | '/logs/$id/edit'
@@ -198,6 +220,8 @@ export interface FileRouteTypes {
     | '/category/$id'
     | '/logs/$id'
     | '/logs/new'
+    | '/profile/$userId'
+    | '/profile/edit'
     | '/logs/'
     | '/messages/'
     | '/logs/$id/edit'
@@ -216,6 +240,8 @@ export interface RootRouteChildren {
   CategoryIdRoute: typeof CategoryIdRoute
   LogsIdRoute: typeof LogsIdRouteWithChildren
   LogsNewRoute: typeof LogsNewRoute
+  ProfileUserIdRoute: typeof ProfileUserIdRoute
+  ProfileEditRoute: typeof ProfileEditRoute
   LogsIndexRoute: typeof LogsIndexRoute
   MessagesIndexRoute: typeof MessagesIndexRoute
 }
@@ -255,6 +281,20 @@ declare module '@tanstack/react-router' {
       path: '/logs'
       fullPath: '/logs/'
       preLoaderRoute: typeof LogsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile/edit': {
+      id: '/profile/edit'
+      path: '/profile/edit'
+      fullPath: '/profile/edit'
+      preLoaderRoute: typeof ProfileEditRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile/$userId': {
+      id: '/profile/$userId'
+      path: '/profile/$userId'
+      fullPath: '/profile/$userId'
+      preLoaderRoute: typeof ProfileUserIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/logs/new': {
@@ -356,6 +396,8 @@ const rootRouteChildren: RootRouteChildren = {
   CategoryIdRoute: CategoryIdRoute,
   LogsIdRoute: LogsIdRouteWithChildren,
   LogsNewRoute: LogsNewRoute,
+  ProfileUserIdRoute: ProfileUserIdRoute,
+  ProfileEditRoute: ProfileEditRoute,
   LogsIndexRoute: LogsIndexRoute,
   MessagesIndexRoute: MessagesIndexRoute,
 }
