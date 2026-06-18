@@ -5,6 +5,7 @@ export interface LogRowProps {
   builder: string
   builderInitial: string
   avatarUrl: string | null
+  imageUrl?: string | null
   when: string
   title: string
   excerpt: string
@@ -19,6 +20,7 @@ export function LogRow({
   builder,
   builderInitial,
   avatarUrl,
+  imageUrl,
   when,
   title,
   excerpt,
@@ -53,32 +55,43 @@ export function LogRow({
             )}
           </div>
 
-          <div className="min-w-0 flex-1">
-            <div className="flex items-baseline gap-[10px] font-body text-[13px] text-(--color-text-muted) mb-[6px]">
-              <span className="text-(--color-text-primary)">{builder}</span>
-              <span
-                aria-hidden
-                className="w-[3px] h-[3px] rounded-full bg-(--color-text-placeholder) inline-block self-center"
-              />
-              <span className="text-(--color-text-placeholder)">{when}</span>
-              {isStuck && (
-                <>
-                  <span
-                    aria-hidden
-                    className="w-[3px] h-[3px] rounded-full bg-(--color-accent) inline-block self-center"
-                  />
-                  <span className="label text-(--color-accent)">STUCK</span>
-                </>
-              )}
+          <div className="min-w-0 flex-1 flex gap-4 items-start">
+            <div className="min-w-0 flex-1">
+              <div className="flex items-baseline gap-[10px] font-body text-[13px] text-(--color-text-muted) mb-[6px]">
+                <span className="text-(--color-text-primary)">{builder}</span>
+                <span
+                  aria-hidden
+                  className="w-[3px] h-[3px] rounded-full bg-(--color-text-placeholder) inline-block self-center"
+                />
+                <span className="text-(--color-text-placeholder)">{when}</span>
+                {isStuck && (
+                  <>
+                    <span
+                      aria-hidden
+                      className="w-[3px] h-[3px] rounded-full bg-(--color-accent) inline-block self-center"
+                    />
+                    <span className="label text-(--color-accent)">STUCK</span>
+                  </>
+                )}
+              </div>
+
+              <h3 className="m-0 font-display text-2xl font-medium tracking-[-0.005em] leading-snug text-(--color-text-primary) group-hover:text-(--color-accent) transition-colors duration-[180ms]">
+                {title}
+              </h3>
+
+              <p className="mt-2 mb-0 font-body text-[14px] leading-relaxed text-(--color-text-muted) italic line-clamp-2 text-pretty">
+                {excerpt}
+              </p>
             </div>
 
-            <h3 className="m-0 font-display text-2xl font-medium tracking-[-0.005em] leading-snug text-(--color-text-primary) group-hover:text-(--color-accent) transition-colors duration-[180ms]">
-              {title}
-            </h3>
-
-            <p className="mt-2 mb-0 font-body text-[14px] leading-relaxed text-(--color-text-muted) italic line-clamp-2 text-pretty">
-              {excerpt}
-            </p>
+            {imageUrl && (
+              <img
+                src={imageUrl}
+                alt=""
+                aria-hidden
+                className="hidden sm:block w-[80px] h-[58px] object-cover border border-(--color-border) shrink-0 mt-0.5"
+              />
+            )}
           </div>
         </div>
 

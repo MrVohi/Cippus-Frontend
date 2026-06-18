@@ -602,6 +602,9 @@ const EXAMPLE_QUERIES = [
   'mortise walls are tearing out',
 ]
 
+// Cosine distance threshold — results above this are too distant to be useful
+const MAX_DISTANCE = 0.5
+
 function ConversationalMode({
   mode,
   onSwitch,
@@ -615,6 +618,10 @@ function ConversationalMode({
   function handleKeyDown(e: KeyboardEvent<HTMLInputElement>) {
     if (e.key === 'Enter') onSubmit()
   }
+
+  const visibleResults = results.filter(
+    (r: any) => (r.distance ?? 1) < MAX_DISTANCE,
+  )
 
   return (
     <section>
@@ -791,7 +798,7 @@ function ConversationalMode({
             >
               RESULTS
             </span>
-            {!isLoading && results.length > 0 && (
+            {!isLoading && visibleResults.length > 0 && (
               <span
                 style={{
                   fontFamily: 'var(--font-body)',
@@ -800,8 +807,8 @@ function ConversationalMode({
                   color: 'var(--color-text-muted)',
                 }}
               >
-                {results.length} builder{results.length !== 1 ? 's' : ''},
-                sorted by closeness
+                {visibleResults.length} builder
+                {visibleResults.length !== 1 ? 's' : ''} at the same stage
               </span>
             )}
           </div>
@@ -836,9 +843,47 @@ function ConversationalMode({
             </div>
           )}
 
-          {!isLoading && results.length > 0 && (
+          {!isLoading && results.length > 0 && visibleResults.length === 0 && (
+            <div
+              style={{
+                padding: '48px 0',
+                textAlign: 'center',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: 10,
+              }}
+            >
+              <div
+                style={{
+                  fontFamily: 'var(--font-display)',
+                  fontSize: 20,
+                  color: 'var(--color-text-primary)',
+                  letterSpacing: '-0.005em',
+                }}
+              >
+                Nothing close enough yet.
+              </div>
+              <p
+                style={{
+                  margin: 0,
+                  fontFamily: 'var(--font-body)',
+                  fontSize: 14,
+                  fontStyle: 'italic',
+                  color: 'var(--color-text-muted)',
+                  maxWidth: 380,
+                  lineHeight: 1.5,
+                }}
+              >
+                Try describing the specific problem you&rsquo;re stuck on
+                &mdash; not the craft. The road might still be empty here.
+              </p>
+            </div>
+          )}
+
+          {!isLoading && visibleResults.length > 0 && (
             <div style={{ border: '1px solid var(--color-border)' }}>
-              {results.map((r: any, i: number) => (
+              {visibleResults.map((r: any, i: number) => (
                 <MatchCard key={r.post_id ?? i} result={r} index={i} />
               ))}
             </div>

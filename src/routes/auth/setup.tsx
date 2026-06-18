@@ -355,7 +355,7 @@ function RouteComponent() {
         position: 'fixed',
         inset: 0,
         zIndex: 50,
-        background: '#DDD2BE',
+        background: 'var(--color-bg-sunken)',
         display: 'flex',
         flexDirection: 'column',
         fontFamily: 'var(--font-body)',

@@ -62,6 +62,8 @@
   --color-graph-line: var(--road-dust);
   /* Dormant connection line */
 
+  --color-bg-sunken: #ddd2be;
+
   --color-nav-bg: var(--pale-stone);
   --color-nav-border: var(--road-dust);
 
@@ -241,6 +243,8 @@
   --color-graph-node: var(--limestone-dark);
   --color-graph-active: var(--ember-dusk);
   --color-graph-line: var(--ash);
+
+  --color-bg-sunken: #131110;
 
   --color-nav-bg: var(--dusk-stone);
   --color-nav-border: var(--ash);
@@ -848,4 +852,56 @@ body {
 
 .close-bar {
   animation: close-bar-fill 1800ms linear forwards;
+}
+
+/* ----------------------------------------------------------
+   MODAL ANIMATIONS
+---------------------------------------------------------- */
+
+@keyframes modal-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -48%) scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@keyframes modal-scrim-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ----------------------------------------------------------
+   NAVBAR RESPONSIVE UTILITIES
+---------------------------------------------------------- */
+
+.nav-links {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+  }
+}
+
+.nav-cta {
+  display: none;
+}
+
+@media (min-width: 640px) {
+  .nav-cta {
+    display: inline-flex;
+  }
 }

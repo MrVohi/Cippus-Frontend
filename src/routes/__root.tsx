@@ -16,10 +16,14 @@ import type { QueryClient } from '@tanstack/react-query'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import type { AuthStore } from '#/stores/useAuthStore'
 import { useAuthStore } from '#/stores/useAuthStore'
+import { useThemeStore } from '#/stores/useThemeStore'
 import { useWsStore } from '#/stores/useWsStore'
 import { useNotificationStore } from '#/stores/useNotificationStore'
 import type { AppNotification } from '#/stores/useNotificationStore'
 import { fetchWithAuth } from '#/lib/api'
+import { CippusLogoHorizontal } from '#/components/CippusMark'
+import { ThemeToggle } from '#/components/ThemeToggle'
+import { DisconnectModal } from '#/components/DisconnectModal'
 import { useEffect, useState } from 'react'
 
 interface MyRouterContext {
@@ -30,23 +34,11 @@ interface MyRouterContext {
 export const Route = createRootRouteWithContext<MyRouterContext>()({
   head: () => ({
     meta: [
-      {
-        charSet: 'utf-8',
-      },
-      {
-        name: 'viewport',
-        content: 'width=device-width, initial-scale=1',
-      },
-      {
-        title: 'TanStack Start Starter',
-      },
+      { charSet: 'utf-8' },
+      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+      { title: 'Cippus' },
     ],
-    links: [
-      {
-        rel: 'stylesheet',
-        href: appCss,
-      },
-    ],
+    links: [{ rel: 'stylesheet', href: appCss }],
   }),
   shellComponent: RootDocument,
 })
@@ -113,7 +105,7 @@ function NotificationPanel({ onClose }: { onClose: () => void }) {
           top: 'var(--navbar-height)',
           right: 0,
           bottom: 0,
-          width: 408,
+          width: 'min(408px, 100vw)',
           background: 'var(--color-bg)',
           borderLeft: '1px solid var(--color-border)',
           zIndex: 50,
@@ -309,33 +301,35 @@ function RootDocument({ children }: { children: React.ReactNode }) {
   const { location } = useRouterState()
   const isLanding = location.pathname === '/'
 
+  const { theme } = useThemeStore()
   const queryClient = useQueryClient()
   const { socket, setSocket, setStatus } = useWsStore()
   const { setNotifications, incrementUnread, resetUnread } =
     useNotificationStore()
   const unreadCount = useNotificationStore((s) => s.unreadCount)
+
   const [panelOpen, setPanelOpen] = useState(false)
+  const [disconnectOpen, setDisconnectOpen] = useState(false)
+
+  // Sync theme to <html data-theme>
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme)
+  }, [theme])
 
   useEffect(() => {
     async function hydrate() {
-      const currentUser = useAuthStore.getState().user
-
-      if (currentUser != null) {
-        return
-      }
-
+      if (useAuthStore.getState().user != null) return
       try {
         const response = await fetch(
           import.meta.env.VITE_API_URL + '/api/v1/auth/refresh',
           { method: 'POST', credentials: 'include' },
         )
-
         if (response.ok) {
           const data = await response.json()
           useAuthStore.getState().setUser(data.user)
           useAuthStore.getState().setToken(data.accessToken)
         }
-      } catch (error) {}
+      } catch {}
     }
     hydrate()
   }, [])
@@ -391,8 +385,6 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 
     async function registerPush() {
       const registration = await navigator.serviceWorker.register('/sw.js')
-
-      // already subscribed — nothing to do
       const existing = await registration.pushManager.getSubscription()
       if (existing) return
 
@@ -400,7 +392,6 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         method: 'GET',
       })
       const { publicKey } = await res.json()
-
       const applicationServerKey = urlBase64ToUint8Array(publicKey)
         .buffer as ArrayBuffer
 
@@ -424,6 +415,8 @@ function RootDocument({ children }: { children: React.ReactNode }) {
     registerPush().catch(() => {})
   }, [user])
 
+  const initial = user?.username[0]?.toUpperCase() ?? '?'
+
   return (
     <html lang="en">
       <head>
@@ -431,84 +424,299 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       </head>
       <body className="min-h-screen flex flex-col">
         {!isLanding && (
-          <nav className="flex justify-between items-center px-6 py-1 bg-(--color-nav-bg) border-b border-(--color-nav-border)">
-            <div className="flex items-center gap-4">
-              <Link className="flex items-center gap-4" to="/">
-                <p>logo</p>
-                <p className="font-display font-semibold">Cippus</p>
+          <nav
+            style={{
+              height: 'var(--navbar-height)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              padding: '0 16px',
+              background: 'var(--color-nav-bg)',
+              borderBottom: '1px solid var(--color-nav-border)',
+              position: 'sticky',
+              top: 0,
+              zIndex: 30,
+              gap: 12,
+            }}
+          >
+            {/* Left: logo + nav links */}
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 32,
+                minWidth: 0,
+              }}
+            >
+              <Link to="/" style={{ flexShrink: 0, display: 'flex' }}>
+                <CippusLogoHorizontal height={18} />
               </Link>
-              <div className="text-(--color-text-muted) flex gap-8 ml-5">
-                <Link to="/">Home</Link>
-                <Link to="/logs" search={{ sort: 'recent' }}>
+
+              <div className="nav-links">
+                <Link
+                  to="/"
+                  style={{ color: 'inherit', textDecoration: 'none' }}
+                  activeProps={{
+                    style: {
+                      color: 'var(--color-text-primary)',
+                      borderBottom: '1px solid var(--color-text-primary)',
+                      paddingBottom: 1,
+                    },
+                  }}
+                >
+                  Home
+                </Link>
+                <Link
+                  to="/logs"
+                  search={{ sort: 'recent' }}
+                  style={{ color: 'inherit', textDecoration: 'none' }}
+                  activeProps={{
+                    style: {
+                      color: 'var(--color-text-primary)',
+                      borderBottom: '1px solid var(--color-text-primary)',
+                      paddingBottom: 1,
+                    },
+                  }}
+                >
                   Logs
                 </Link>
-                <span>Profile</span>
-                <span>Search</span>
+                <Link
+                  to="/search"
+                  search={{
+                    q: '',
+                    mode: 'conversational',
+                    category: '',
+                    stage: '',
+                    since: '',
+                  }}
+                  style={{ color: 'inherit', textDecoration: 'none' }}
+                  activeProps={{
+                    style: {
+                      color: 'var(--color-text-primary)',
+                      borderBottom: '1px solid var(--color-text-primary)',
+                      paddingBottom: 1,
+                    },
+                  }}
+                >
+                  Search
+                </Link>
               </div>
             </div>
 
-            {user ? (
-              <div>
-                <span>avatar</span>
-                <Link to="/logs/new"> · START LOG</Link>
-                <Link to="/messages"> · NEW MESSAGE</Link>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setPanelOpen((o) => !o)
-                    resetUnread()
-                  }}
-                  style={{ position: 'relative' }}
-                >
-                  <svg
-                    width="18"
-                    height="18"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    aria-hidden="true"
+            {/* Right: controls */}
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 10,
+                flexShrink: 0,
+              }}
+            >
+              {/* Dark mode toggle */}
+              <ThemeToggle />
+
+              {user ? (
+                <>
+                  {/* Messages */}
+                  <Link
+                    to="/messages"
+                    aria-label="Messages"
+                    style={{
+                      width: 32,
+                      height: 32,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: 'var(--color-text-muted)',
+                      borderRadius: 'var(--radius-sm)',
+                      transition: 'color var(--duration-fast) var(--ease-base)',
+                    }}
                   >
-                    <path
-                      d="M6 16h12l-1.5-2V10a4.5 4.5 0 1 0-9 0v4L6 16Z M10 19a2 2 0 0 0 4 0"
-                      stroke="currentColor"
-                      strokeWidth="1.3"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                  {unreadCount > 0 && (
-                    <span
+                    <svg
+                      width="17"
+                      height="17"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      aria-hidden="true"
+                    >
+                      <rect
+                        x="3.5"
+                        y="6"
+                        width="17"
+                        height="12"
+                        rx="0.5"
+                        stroke="currentColor"
+                        strokeWidth="1.3"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                      <path
+                        d="M3.5 7.2L12 13l8.5-5.8"
+                        stroke="currentColor"
+                        strokeWidth="1.3"
+                        strokeLinecap="round"
+                      />
+                    </svg>
+                  </Link>
+
+                  {/* Start a log — hidden on mobile */}
+                  <Link
+                    to="/logs/new"
+                    className="nav-cta"
+                    style={{
+                      background: 'var(--color-accent)',
+                      color: '#fff',
+                      border: 'none',
+                      padding: '6px 12px',
+                      borderRadius: 'var(--radius-sm)',
+                      fontFamily: 'var(--font-body)',
+                      fontSize: 12,
+                      fontWeight: 600,
+                      letterSpacing: '0.06em',
+                      textTransform: 'uppercase',
+                      textDecoration: 'none',
+                      lineHeight: 1,
+                      alignItems: 'center',
+                      whiteSpace: 'nowrap',
+                      transition:
+                        'background var(--duration-fast) var(--ease-base)',
+                    }}
+                  >
+                    Start a log
+                  </Link>
+
+                  {/* Notifications bell */}
+                  <button
+                    type="button"
+                    aria-label="Notifications"
+                    onClick={() => {
+                      setPanelOpen((o) => !o)
+                      resetUnread()
+                    }}
+                    style={{
+                      width: 32,
+                      height: 32,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      background: 'transparent',
+                      border: 'none',
+                      color: 'var(--color-text-muted)',
+                      cursor: 'pointer',
+                      padding: 0,
+                      position: 'relative',
+                      borderRadius: 'var(--radius-sm)',
+                    }}
+                  >
+                    <svg
+                      width="17"
+                      height="17"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      aria-hidden="true"
+                    >
+                      <path
+                        d="M6 16h12l-1.5-2V10a4.5 4.5 0 1 0-9 0v4L6 16Z M10 19a2 2 0 0 0 4 0"
+                        stroke="currentColor"
+                        strokeWidth="1.3"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                    {unreadCount > 0 && (
+                      <span
+                        aria-label={`${unreadCount} unread`}
+                        style={{
+                          position: 'absolute',
+                          top: 4,
+                          right: 4,
+                          width: 7,
+                          height: 7,
+                          borderRadius: '50%',
+                          background: 'var(--color-accent)',
+                          border: '1.5px solid var(--color-nav-bg)',
+                        }}
+                      />
+                    )}
+                  </button>
+
+                  {/* Avatar → disconnect modal */}
+                  <button
+                    type="button"
+                    aria-label="Account options"
+                    onClick={() => setDisconnectOpen(true)}
+                    style={{
+                      width: 30,
+                      height: 30,
+                      borderRadius: '50%',
+                      background: 'var(--color-surface-raised)',
+                      border: '1px solid var(--color-border)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontFamily: 'var(--font-display)',
+                      fontSize: 14,
+                      fontWeight: 500,
+                      color: 'var(--color-text-primary)',
+                      cursor: 'pointer',
+                      padding: 0,
+                      flexShrink: 0,
+                      transition:
+                        'border-color var(--duration-fast) var(--ease-base)',
+                    }}
+                  >
+                    {initial}
+                  </button>
+
+                  {(user.role === 'admin' || user.role === 'moderator') && (
+                    <Link
+                      to="/"
+                      className="label"
                       style={{
-                        position: 'absolute',
-                        top: 0,
-                        right: 0,
-                        width: 8,
-                        height: 8,
-                        borderRadius: '50%',
-                        background: 'var(--color-accent)',
+                        textDecoration: 'none',
+                        color: 'var(--color-accent)',
+                        display: 'none',
                       }}
-                    />
+                    >
+                      Admin
+                    </Link>
                   )}
-                </button>
-                {panelOpen && (
-                  <NotificationPanel onClose={() => setPanelOpen(false)} />
-                )}
-                {(user.role === 'admin' || user.role === 'moderator') && (
-                  <span> · ADMIN</span>
-                )}
-              </div>
-            ) : (
-              <Link to="/auth/login" className="btn-ghost">
-                LOG IN
-              </Link>
-            )}
+                </>
+              ) : (
+                <Link
+                  to="/auth/login"
+                  style={{
+                    fontFamily: 'var(--font-body)',
+                    fontSize: 13,
+                    color: 'var(--color-text-secondary)',
+                    border: '1px solid var(--color-border)',
+                    borderRadius: 'var(--radius-full)',
+                    padding: '4px 12px',
+                    textDecoration: 'none',
+                    transition:
+                      'border-color var(--duration-fast) var(--ease-base), color var(--duration-fast) var(--ease-base)',
+                  }}
+                >
+                  Log in
+                </Link>
+              )}
+            </div>
           </nav>
         )}
+
+        {/* Notification panel */}
+        {panelOpen && <NotificationPanel onClose={() => setPanelOpen(false)} />}
+
+        {/* Disconnect modal */}
+        {disconnectOpen && (
+          <DisconnectModal onClose={() => setDisconnectOpen(false)} />
+        )}
+
         {children}
+
         {import.meta.env.DEV && (
           <TanStackDevtools
-            config={{
-              position: 'bottom-right',
-            }}
+            config={{ position: 'bottom-right' }}
             plugins={[
               {
                 name: 'Tanstack Router',
