@@ -296,6 +296,7 @@ function LogsPage() {
             <LogRow
               id={post.post_id}
               builder={post.author?.username ?? ''}
+              builderId={post.author_id}
               builderInitial={(post.author?.username?.[0] ?? '?').toUpperCase()}
               avatarUrl={post.author?.avatar_url ?? null}
               imageUrl={post.image_url || null}

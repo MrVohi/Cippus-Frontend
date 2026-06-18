@@ -493,6 +493,22 @@ function RootDocument({ children }: { children: React.ReactNode }) {
                 >
                   Search
                 </Link>
+                {user && (
+                  <Link
+                    to="/profile/$userId"
+                    params={{ userId: String(user.id) }}
+                    style={{ color: 'inherit', textDecoration: 'none' }}
+                    activeProps={{
+                      style: {
+                        color: 'var(--color-text-primary)',
+                        borderBottom: '1px solid var(--color-text-primary)',
+                        paddingBottom: 1,
+                      },
+                    }}
+                  >
+                    Profile
+                  </Link>
+                )}
               </div>
             </div>
 

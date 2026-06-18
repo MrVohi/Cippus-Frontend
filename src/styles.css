@@ -225,7 +225,7 @@
   --color-text-placeholder: var(--ash);
   --color-text-on-accent: #ffffff;
 
-  --color-border: var(--ash);
+  --color-border: color-mix(in oklab, var(--limestone-dark) 30%, var(--ash));
   --color-border-subtle: color-mix(in oklab, var(--ash) 50%, transparent);
 
   --color-accent: var(--ember-dusk);
