@@ -301,7 +301,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
   const { location } = useRouterState()
   const isLanding = location.pathname === '/'
 
-  const { theme, toggle: toggleTheme } = useThemeStore()
+  const { theme } = useThemeStore()
   const queryClient = useQueryClient()
   const { socket, setSocket, setStatus } = useWsStore()
   const { setNotifications, incrementUnread, resetUnread } =
@@ -482,6 +482,13 @@ function RootDocument({ children }: { children: React.ReactNode }) {
                 </Link>
                 <Link
                   to="/search"
+                  search={{
+                    q: '',
+                    mode: 'conversational',
+                    category: '',
+                    stage: '',
+                    since: '',
+                  }}
                   style={{ color: 'inherit', textDecoration: 'none' }}
                   activeProps={{
                     style: {
