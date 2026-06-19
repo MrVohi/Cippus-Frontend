@@ -26,6 +26,7 @@ import { Route as AuthLoginRouteImport } from './routes/auth/login'
 import { Route as LogsIdIndexRouteImport } from './routes/logs/$id/index'
 import { Route as LogsIdMatchRouteImport } from './routes/logs/$id/match'
 import { Route as LogsIdEditRouteImport } from './routes/logs/$id/edit'
+import { Route as AuthOauthCallbackRouteImport } from './routes/auth/oauth.callback'
 
 const SearchRoute = SearchRouteImport.update({
   id: '/search',
@@ -112,6 +113,11 @@ const LogsIdEditRoute = LogsIdEditRouteImport.update({
   path: '/edit',
   getParentRoute: () => LogsIdRoute,
 } as any)
+const AuthOauthCallbackRoute = AuthOauthCallbackRouteImport.update({
+  id: '/auth/oauth/callback',
+  path: '/auth/oauth/callback',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -128,6 +134,7 @@ export interface FileRoutesByFullPath {
   '/profile/edit': typeof ProfileEditRoute
   '/logs/': typeof LogsIndexRoute
   '/messages/': typeof MessagesIndexRoute
+  '/auth/oauth/callback': typeof AuthOauthCallbackRoute
   '/logs/$id/edit': typeof LogsIdEditRoute
   '/logs/$id/match': typeof LogsIdMatchRoute
   '/logs/$id/': typeof LogsIdIndexRoute
@@ -146,6 +153,7 @@ export interface FileRoutesByTo {
   '/profile/edit': typeof ProfileEditRoute
   '/logs': typeof LogsIndexRoute
   '/messages': typeof MessagesIndexRoute
+  '/auth/oauth/callback': typeof AuthOauthCallbackRoute
   '/logs/$id/edit': typeof LogsIdEditRoute
   '/logs/$id/match': typeof LogsIdMatchRoute
   '/logs/$id': typeof LogsIdIndexRoute
@@ -166,6 +174,7 @@ export interface FileRoutesById {
   '/profile/edit': typeof ProfileEditRoute
   '/logs/': typeof LogsIndexRoute
   '/messages/': typeof MessagesIndexRoute
+  '/auth/oauth/callback': typeof AuthOauthCallbackRoute
   '/logs/$id/edit': typeof LogsIdEditRoute
   '/logs/$id/match': typeof LogsIdMatchRoute
   '/logs/$id/': typeof LogsIdIndexRoute
@@ -187,6 +196,7 @@ export interface FileRouteTypes {
     | '/profile/edit'
     | '/logs/'
     | '/messages/'
+    | '/auth/oauth/callback'
     | '/logs/$id/edit'
     | '/logs/$id/match'
     | '/logs/$id/'
@@ -205,6 +215,7 @@ export interface FileRouteTypes {
     | '/profile/edit'
     | '/logs'
     | '/messages'
+    | '/auth/oauth/callback'
     | '/logs/$id/edit'
     | '/logs/$id/match'
     | '/logs/$id'
@@ -224,6 +235,7 @@ export interface FileRouteTypes {
     | '/profile/edit'
     | '/logs/'
     | '/messages/'
+    | '/auth/oauth/callback'
     | '/logs/$id/edit'
     | '/logs/$id/match'
     | '/logs/$id/'
@@ -244,6 +256,7 @@ export interface RootRouteChildren {
   ProfileEditRoute: typeof ProfileEditRoute
   LogsIndexRoute: typeof LogsIndexRoute
   MessagesIndexRoute: typeof MessagesIndexRoute
+  AuthOauthCallbackRoute: typeof AuthOauthCallbackRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -367,6 +380,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LogsIdEditRouteImport
       parentRoute: typeof LogsIdRoute
     }
+    '/auth/oauth/callback': {
+      id: '/auth/oauth/callback'
+      path: '/auth/oauth/callback'
+      fullPath: '/auth/oauth/callback'
+      preLoaderRoute: typeof AuthOauthCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -400,6 +420,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProfileEditRoute: ProfileEditRoute,
   LogsIndexRoute: LogsIndexRoute,
   MessagesIndexRoute: MessagesIndexRoute,
+  AuthOauthCallbackRoute: AuthOauthCallbackRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

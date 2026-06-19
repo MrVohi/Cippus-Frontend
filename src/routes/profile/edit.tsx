@@ -374,7 +374,7 @@ function ProfileEditPage() {
   )
   const [pendingFile, setPendingFile] = useState<File | null>(null)
 
-  const initial = (authUser?.username?.[0] ?? '?').toUpperCase()
+  const initial = (authUser?.username[0] ?? '?').toUpperCase()
   const overHalf = bio.length / BIO_MAX > 0.66
 
   const changes = [
@@ -414,7 +414,7 @@ function ProfileEditPage() {
     })
     navigate({
       to: '/profile/$userId',
-      params: { userId: String(authUser?.id) },
+      params: { userId: String(authUser.id) },
     })
   }
 

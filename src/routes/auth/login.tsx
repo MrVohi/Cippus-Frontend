@@ -1,4 +1,5 @@
 import { createFileRoute, useNavigate, Link } from '@tanstack/react-router'
+import { OAuthButtons } from '#/components/OAuthButtons'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import z from 'zod'
@@ -216,6 +217,8 @@ function LoginPage() {
               Continue building
             </button>
           </form>
+
+          <OAuthButtons />
 
           <div
             style={{
