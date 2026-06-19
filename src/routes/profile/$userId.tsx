@@ -171,7 +171,7 @@ function SectionLabel({
 
 function Masthead({ user, isSelf }: { user: UserProfile; isSelf: boolean }) {
   const navigate = useNavigate()
-  const initial = (user.username[0] ?? '?').toUpperCase()
+  const initial = (user.username[0] || '?').toUpperCase()
 
   return (
     <section
